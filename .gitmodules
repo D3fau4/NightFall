@@ -1,0 +1,3 @@
+[submodule "Sys-Updater/borealis"]
+	path = Sys-Updater/borealis
+	url = https://github.com/natinusala/borealis.git
