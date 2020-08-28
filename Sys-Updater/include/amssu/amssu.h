@@ -20,34 +20,45 @@
 extern "C"
 {
 #endif
-        typedef struct
-        {
-            u32 version;
-            bool exfat_supported;
-            u32 num_firmware_variations;
-            u32 firmware_variation_ids[16];
-        } AmsSuUpdateInformation;
 
-        typedef struct
-        {
-            Result result;
-            Result exfat_result;
-            NcmContentMetaKey invalid_key;
-            NcmContentId invalid_content_id;
-        } AmsSuUpdateValidationInfo;
+    typedef struct
+    {
+        u32 version;
+        bool exfat_supported;
+        u32 num_firmware_variations;
+        u32 firmware_variation_ids[16];
+    } AmsSuUpdateInformation;
 
-        Result amssuInitialize();
-        void amssuExit();
-        Service *amssuGetServiceSession(void);
+    enum UpdateState
+    {
+        NothingToDo,
+        NeedsSetup,
+        NeedsPrepare,
+        AwaitingPrepare,
+        NeedsApply,
+        AwaitingReboot
+    };
 
-        Result amssuGetUpdateInformation(AmsSuUpdateInformation *out, const char *path);
-        Result amssuValidateUpdate(AmsSuUpdateValidationInfo *out, const char *path);
-        Result amssuSetupUpdate(void *buffer, size_t size, const char *path, bool exfat);
-        Result amssuSetupUpdateWithVariation(void *buffer, size_t size, const char *path, bool exfat, u32 variation);
-        Result amssuRequestPrepareUpdate(AsyncResult *a);
-        Result amssuGetPrepareUpdateProgress(NsSystemUpdateProgress *out);
-        Result amssuHasPreparedUpdate(bool *out);
-        Result amssuApplyPreparedUpdate();
+    typedef struct
+    {
+        Result result;
+        Result exfat_result;
+        NcmContentMetaKey invalid_key;
+        NcmContentId invalid_content_id;
+    } AmsSuUpdateValidationInfo;
+
+    Result amssuInitialize();
+    void amssuExit();
+    Service *amssuGetServiceSession(void);
+
+    Result amssuGetUpdateInformation(AmsSuUpdateInformation *out, const char *path);
+    Result amssuValidateUpdate(AmsSuUpdateValidationInfo *out, const char *path);
+    Result amssuSetupUpdate(void *buffer, size_t size, const char *path, bool exfat);
+    Result amssuSetupUpdateWithVariation(void *buffer, size_t size, const char *path, bool exfat, u32 variation);
+    Result amssuRequestPrepareUpdate(AsyncResult *a);
+    Result amssuGetPrepareUpdateProgress(NsSystemUpdateProgress *out);
+    Result amssuHasPreparedUpdate(bool *out);
+    Result amssuApplyPreparedUpdate();
 
 #ifdef __cplusplus
 }

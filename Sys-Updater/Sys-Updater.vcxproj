@@ -100,11 +100,21 @@
     <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\amssu\amssu.cpp" />
+    <ClCompile Include="source\amssu\amssu.c" />
+    <ClCompile Include="source\FS\FS.cpp" />
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\net\net.cpp" />
+    <ClCompile Include="source\sm\sm.cpp" />
+    <ClCompile Include="source\spl\spl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\amssu\amssu.hpp" />
+    <ClInclude Include="include\FS\FS.hpp" />
+    <ClInclude Include="include\net\net.hpp" />
+    <ClInclude Include="include\service_guard.h" />
+    <ClInclude Include="include\sm\sm.hpp" />
+    <ClInclude Include="include\spl\spl.hpp" />
+    <ClInclude Include="include\Types.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
