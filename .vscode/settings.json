@@ -63,6 +63,7 @@
         "ratio": "cpp",
         "stop_token": "cpp",
         "thread": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "fstream": "cpp"
     }
 }

@@ -17,9 +17,11 @@ typedef SSIZE_T ssize_t;
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <fstream>
 
 #include <borealis.hpp>
 #include <string>
+#include "UI/UI.hpp"
 #include "json.hpp"
 #include "Types.hpp"
 #include "net/net.hpp"
@@ -28,7 +30,8 @@ typedef SSIZE_T ssize_t;
 #include "amssu/amssu.h"
 
 using json = nlohmann::json;
-
+json j;
+bool onlineupdate = true;
 /* Var */
 static constexpr size_t UpdateTaskBufferSize = 0x100000;
 AsyncResult m_prepare_result;
@@ -86,8 +89,10 @@ void close_Services()
 
 void InitFolders()
 {
-	if(R_SUCCEEDED(FS::createdir("/switch/Sys-Updater/"))) brls::Logger::debug("se ha creado la carpeta");
-	if(R_SUCCEEDED(FS::createdir("/switch/Sys-Updater/temp/"))) brls::Logger::debug("se ha creado la carpeta");
+	if (R_SUCCEEDED(FS::createdir("/switch/Sys-Updater/")))
+		brls::Logger::debug("se ha creado la carpeta");
+	if (R_SUCCEEDED(FS::createdir("/switch/Sys-Updater/temp/")))
+		brls::Logger::debug("se ha creado la carpeta");
 }
 
 int main(int argc, char *argv[])
@@ -96,12 +101,15 @@ int main(int argc, char *argv[])
 	InitFolders();
 	Network::Net net = Network::Net();
 	brls::Logger::setLogLevel(brls::LogLevel::DEBUG);
+	net.Download("http://192.168.1.128/info", "/switch/Sys-Updater/actual.json");
+	std::ifstream i("/switch/Sys-Updater/actual.json");
+	i >> j;
 	if (!brls::Application::init("Sys-Updater"))
 	{
 		brls::Logger::error("Unable to init Borealis application");
 		return EXIT_FAILURE;
 	}
-	
+
 	/* Initialize Services */
 	if (R_FAILED(Init_Services()))
 	{
@@ -124,12 +132,33 @@ int main(int argc, char *argv[])
 		return NULL;
 	}
 	char firmwarever[0x43];
-	std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
+	if (j["Firmwver"].get<std::string>() == ver.display_version)
+	{
+		std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
+	}
+	else
+	{
+		std::snprintf(firmwarever, sizeof(firmwarever), "Se necesita update");
+	}
+
 	brls::ListItem *UpdateOnlineItem = new brls::ListItem("System Update", firmwarever);
 	brls::ListItem *UpdateOfflineItem = new brls::ListItem("System Update Offline");
 	UpdateOnlineItem->getClickEvent()->subscribe([](brls::View *view) {
 		//download
-	
+		brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
+		stagedFrame->setTitle("System Updater");
+		if (onlineupdate == true)
+		{
+			Network::Net net = Network::Net();
+			std::string download = "http://192.168.1.128/" + j["intfw"].get<std::string>();
+			brls::Logger::debug(download);
+			net.Download(download, "/switch/Sys-Updater/temp.json");
+			stagedFrame->addStage(new InstallUpdatePage(stagedFrame, "Go to step 2"));
+			stagedFrame->addStage(new DownloadUpdatePage(stagedFrame));
+		} else {
+			// añadir pantalla de "sistema actualizado"
+		}
+		brls::Application::pushView(stagedFrame);
 	});
 	UpdateOfflineItem->getClickEvent()->subscribe([](brls::View *view) {
 		//installUpdate("/switch/Sys-Updater/temp/");
