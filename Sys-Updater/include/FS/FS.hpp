@@ -16,4 +16,5 @@ namespace FS {
     bool checkdirexist(string path);
     Result DeleteDir(string path);
     Result createFile(string path);
+    Result DeleteFile(string path);
 };

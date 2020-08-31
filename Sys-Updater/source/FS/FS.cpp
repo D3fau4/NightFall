@@ -48,4 +48,10 @@ namespace FS
 		}
 		return 1;
 	}
+
+	Result DeleteFile(string path){
+		std::filesystem::remove(path);
+		return 0;
+	}
+	
 } // namespace FS

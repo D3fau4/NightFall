@@ -8,15 +8,15 @@
 #include "net/net.hpp"
 
 json jso1n;
-
+BackGround::BackgroundTasks meme;
 DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
     : frame(frame)
 {
+    // Label
     std::ifstream i("/switch/Sys-Updater/temp.json");
     i >> jso1n;
-    // Label
     this->progressDisp = new brls::ProgressDisplay();
-    this->progressDisp->setProgress(this->progressValue, 1000);
+    this->progressDisp->setProgress(meme.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
     this->progressDisp->setParent(this);
     this->label = new brls::Label(brls::LabelStyle::DIALOG, "Downloading Update data...", true);
     this->label->setHorizontalAlign(NVG_ALIGN_CENTER);
@@ -28,12 +28,15 @@ DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
 
 void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsigned height, brls::Style *style, brls::FrameContext *ctx)
 {
-    if (progressValue == jso1n["fw_info"]["files"].get<int>())
+    if (meme.m_DownloadProgress == jso1n["fw_info"]["files"].get<int>()){
         this->frame->nextStage();
-    this->progressDisp->setProgress(this->progressValue, jso1n["fw_info"]["files"].get<int>());
+        meme.m_Download = false;
+    }
+    this->progressDisp->setProgress(meme.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
     this->progressDisp->frame(ctx);
     this->label->frame(ctx);
     this->label1->frame(ctx);
+    meme.m_Download = true;
 }
 
 void DownloadUpdatePage::DownloadUpdate(void)

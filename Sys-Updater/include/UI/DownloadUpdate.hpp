@@ -2,6 +2,7 @@
 
 #include <borealis.hpp>
 #include "json.hpp"
+#include "thread.hpp"
 
 using json = nlohmann::json;
 
@@ -13,7 +14,6 @@ class DownloadUpdatePage : public brls::View
     brls::Label* label;
     brls::Label* label1;
     int progressValue = 0;
-
   public:
     DownloadUpdatePage(brls::StagedAppletFrame* frame);
     ~DownloadUpdatePage();

@@ -28,6 +28,7 @@ typedef SSIZE_T ssize_t;
 #include "FS/FS.hpp"
 #include "sm/sm.hpp"
 #include "amssu/amssu.h"
+#include "thread.hpp"
 
 using json = nlohmann::json;
 json j;
@@ -87,6 +88,12 @@ void close_Services()
 	splExit();
 }
 
+void deletetemp()
+{
+	FS::DeleteDir("/switch/Sys-Updater/temp/");
+	FS::DeleteFile("/switch/Sys-Updater/temp.json");
+}
+
 void InitFolders()
 {
 	if (R_SUCCEEDED(FS::createdir("/switch/Sys-Updater/")))
@@ -99,6 +106,9 @@ int main(int argc, char *argv[])
 {
 	// Init the app
 	InitFolders();
+	// init
+	BackGround::BackgroundTasks meme;
+	//meme.BackgroundTasks();
 	Network::Net net = Network::Net();
 	brls::Logger::setLogLevel(brls::LogLevel::DEBUG);
 	net.Download("http://192.168.1.128/info", "/switch/Sys-Updater/actual.json");
@@ -155,7 +165,10 @@ int main(int argc, char *argv[])
 			net.Download(download, "/switch/Sys-Updater/temp.json");
 			stagedFrame->addStage(new InstallUpdatePage(stagedFrame, "Go to step 2"));
 			stagedFrame->addStage(new DownloadUpdatePage(stagedFrame));
-		} else {
+			//meme.m_Download = true;
+		}
+		else
+		{
 			// añadir pantalla de "sistema actualizado"
 		}
 		brls::Application::pushView(stagedFrame);
@@ -187,6 +200,10 @@ int main(int argc, char *argv[])
 	while (brls::Application::mainLoop())
 		;
 	close_Services();
+	brls::Logger::debug("iniciando Finalizado del thread");
+
+	brls::Logger::debug("Finalizado thread");
+	deletetemp();
 	// Exit
 	return EXIT_SUCCESS;
 }
