@@ -8,7 +8,9 @@
 #include "net/net.hpp"
 
 json jso1n;
-BackGround::BackgroundTasks meme;
+BackGround::BackgroundTasks Download;
+bool nextframe = false;
+bool showdialog = false;
 DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
     : frame(frame)
 {
@@ -16,7 +18,7 @@ DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
     std::ifstream i("/switch/Sys-Updater/temp.json");
     i >> jso1n;
     this->progressDisp = new brls::ProgressDisplay();
-    this->progressDisp->setProgress(meme.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
+    this->progressDisp->setProgress(Download.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
     this->progressDisp->setParent(this);
     this->label = new brls::Label(brls::LabelStyle::DIALOG, "Downloading Update data...", true);
     this->label->setHorizontalAlign(NVG_ALIGN_CENTER);
@@ -28,15 +30,39 @@ DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
 
 void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsigned height, brls::Style *style, brls::FrameContext *ctx)
 {
-    if (meme.m_DownloadProgress == jso1n["fw_info"]["files"].get<int>()){
-        this->frame->nextStage();
-        meme.m_Download = false;
+    if (Download.m_DownloadProgress == jso1n["fw_info"]["files"].get<int>())
+    {
+        Download.m_Download = false;
+        brls::Dialog *dialog = new brls::Dialog("Warning: do you want to proceed?");
+            brls::GenericEvent::Callback ContinueCallback = [dialog](brls::View *view) {
+                dialog->close();
+                nextframe = true;
+            };
+            brls::GenericEvent::Callback cancelCallback = [dialog](brls::View *view) {
+                dialog->close();
+                return EXIT_SUCCESS;
+            };
+            if (nextframe == true)
+            {
+                this->frame->nextStage();
+            }
+            dialog->addButton("Continue", ContinueCallback);
+            dialog->addButton("Cancel", cancelCallback);
+            dialog->setCancelable(false);
+        if (showdialog != true)
+        {
+            showdialog = true;
+            dialog->open();
+        }
     }
-    this->progressDisp->setProgress(meme.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
+    else if (Download.m_Download != true)
+    {
+        Download.m_Download = true;
+    }
+    this->progressDisp->setProgress(Download.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
     this->progressDisp->frame(ctx);
     this->label->frame(ctx);
     this->label1->frame(ctx);
-    meme.m_Download = true;
 }
 
 void DownloadUpdatePage::DownloadUpdate(void)
@@ -118,4 +144,5 @@ DownloadUpdatePage::~DownloadUpdatePage()
 {
     delete this->progressDisp;
     delete this->label;
+    delete this->label1;
 }

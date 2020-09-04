@@ -6,10 +6,14 @@
 #include <iostream>
 #include "net/net.hpp"
 
-#include <chrono>
-using namespace std::literals::chrono_literals;
-
+/* Var */
 json V1;
+static constexpr size_t UpdateTaskBufferSize = 0x100000;
+AsyncResult m_prepare_result;
+
+std::string Updatepath;
+UpdateState m_UpdateState = UpdateState::NeedsValidate;
+AmsSuUpdateValidationInfo m_validateinfo;
 
 namespace BackGround
 {
@@ -17,7 +21,8 @@ namespace BackGround
     {
         brls::Logger::debug("thread arrancado (?)");
         this->m_running = true;
-        this->m_Download == false;
+        this->m_Download = false;
+        this->m_InstallUpdate = false;
 
         this->m_downloadUpdateThread = std::thread(&BackgroundTasks::DownloadUpdate, this);
     }
@@ -47,82 +52,145 @@ namespace BackGround
                         std::string download = "http://192.168.1.128/c/c/" + V1["programid"][v7[i]]["Program"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
-                        net.Download(download, out);
-                        this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                        if (net.Download(download, out) == true)
+                        {
+                            printf("error");
+                        }
+                        else
+                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
                     }
                     else if (V1["programid"][v7[i]].contains("Data") == true)
                     {
                         std::string download = "http://192.168.1.128/c/c/" + V1["programid"][v7[i]]["Data"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
-                        net.Download(download, out);
-                        this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                        if (net.Download(download, out) == true)
+                        {
+                            printf("error");
+                        }
+                        else
+                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
                     }
                     else if (V1["programid"][v7[i]].contains("PublicData") == true)
                     {
                         std::string download = "http://192.168.1.128/c/c/" + V1["programid"][v7[i]]["PublicData"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
-                        net.Download(download, out);
-                        this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                        if (net.Download(download, out) == true)
+                        {
+                            printf("error");
+                        }
+                        else
+                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
                     }
                     if (V1["programid"][v7[i]].contains("Meta") == true)
                     {
                         std::string download = "http://192.168.1.128/c/a/" + V1["programid"][v7[i]]["Meta"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
-                        net.Download(download, out);
-                        this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                        if (net.Download(download, out) == true)
+                        {
+                            printf("error");
+                        }
+                        else
+                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
                     }
                 }
+                this->m_Download = false;
             }
-        }
-    }
-
-} // namespace BackGround
-
-/*void BackGround::Download(bool download)
-{
-    Network::Net net = Network::Net();
-
-    while (this->m_running)
-    {
-        if (download == true)
-        {
-            auto v7 = V1["titleids"].get<std::vector<std::string>>();
-            int n = v7.size();
-            for (int i = 0; i < n; i++)
+            if (this->m_InstallUpdate == true)
             {
-                if (V1["programid"][v7[i]].contains("Program") == true)
+                if (m_UpdateState == UpdateState::NeedsValidate)
                 {
-                    std::string download = "http://192.168.1.128/c/c/" + V1["programid"][v7[i]]["Program"].get<std::string>();
-                    brls::Logger::debug(download);
-                    std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
-                    net.Download(download, out);
+                    if (R_FAILED(amssuValidateUpdate(&m_validateinfo, "/switch/Sys-Updater/temp/")))
+                    {
+                        brls::Application::crash("No se pudo validar");
+                    }
+                    if (R_SUCCEEDED(m_validateinfo.result))
+                    {
+                        brls::Logger::debug("m_UpdateState == UpdateState::NeedsValidate");
+                        m_UpdateState = UpdateState::NeedsSetup;
+                        this->m_InstallProgress = 1;
+                    }
                 }
-                else if (V1["programid"][v7[i]].contains("Data") == true)
+                if (m_UpdateState == UpdateState::NeedsSetup)
                 {
-                    std::string download = "http://192.168.1.128/c/c/" + V1["programid"][v7[i]]["Data"].get<std::string>();
-                    brls::Logger::debug(download);
-                    std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
-                    net.Download(download, out);
+                    if (R_FAILED(amssuSetupUpdate(nullptr, UpdateTaskBufferSize, "/switch/Sys-Updater/temp/", true)))
+                    {
+                        brls::Application::crash("Fallo al hacer el setup");
+                        //return EXIT_FAILURE;
+                    }
+                    else
+                    {
+                        brls::Logger::debug("m_UpdateState == UpdateState::NeedsSetup");
+                        m_UpdateState = UpdateState::NeedsPrepare;
+                        this->m_InstallProgress = 2;
+                    }
                 }
-                else if (V1["programid"][v7[i]].contains("PublicData") == true)
+                else if (m_UpdateState == UpdateState::NeedsPrepare)
                 {
-                    std::string download = "http://192.168.1.128/c/c/" + V1["programid"][v7[i]]["PublicData"].get<std::string>();
-                    brls::Logger::debug(download);
-                    std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
-                    net.Download(download, out);
+                    if (R_FAILED(amssuRequestPrepareUpdate(&m_prepare_result)))
+                    {
+                        brls::Application::crash("Fallo al preperar el update");
+                        //return EXIT_FAILURE;
+                    }
+                    brls::Logger::debug("m_UpdateState == UpdateState::NeedsPrepare");
+                    m_UpdateState = UpdateState::AwaitingPrepare;
+                    this->m_InstallProgress = 3;
                 }
-                if (V1["programid"][v7[i]].contains("Meta") == true)
+                else if (m_UpdateState == UpdateState::AwaitingPrepare)
                 {
-                    std::string download = "http://192.168.1.128/c/a/" + V1["programid"][v7[i]]["Meta"].get<std::string>();
-                    brls::Logger::debug(download);
-                    std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
-                    net.Download(download, out);
+                    if (R_FAILED(asyncResultWait(&m_prepare_result, 0)))
+                    {
+                        //brls::Application::crash("Fallo al esperar un resultado");
+                    }
+                    else if (R_FAILED(asyncResultGet(&m_prepare_result)))
+                    {
+                        //brls::Application::crash("Fallo al obtener un resultado");
+                    }
+                    this->m_InstallProgress = 4;
+                }
+
+                bool prepared;
+                if (R_FAILED(amssuHasPreparedUpdate(&prepared)))
+                {
+                    brls::Application::crash("Fallo al comprobar que está el update preparado");
+                }
+
+                if (prepared)
+                {
+                    brls::Logger::debug("if (prepared)");
+                    m_UpdateState = UpdateState::NeedsApply;
+                }
+
+                NsSystemUpdateProgress update_progress = {};
+                /*this->m_currentbarsize = static_cast<int>(update_progress.current_size);
+                this->m_progressbarsize = static_cast<int>(update_progress.total_size);*/
+                if (R_FAILED(amssuGetPrepareUpdateProgress(&update_progress)))
+                {
+                    brls::Application::crash("Fallo al hacer el setup");
+                }
+
+                if (m_UpdateState == UpdateState::NeedsApply)
+                {
+                    if (R_FAILED(amssuApplyPreparedUpdate()))
+                    {
+                        brls::Application::crash("Fallo al instalar");
+                        // Reboot
+                    }
+                    brls::Logger::debug("amssuApplyPreparedUpdate()");
+                    this->m_InstallProgress = 5;
+                    m_UpdateState = UpdateState::AwaitingReboot;
+                }
+                if (m_UpdateState == UpdateState::AwaitingReboot)
+                {
+                    brls::Logger::debug("Preparado: Reinicio en 3s");
+                    std::this_thread::sleep_for(3s);
+                    bpcInitialize();
+                    bpcRebootSystem();
+                    bpcExit();
                 }
             }
-            download = false;
         }
     }
-}*/
+} // namespace BackGround

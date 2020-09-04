@@ -33,14 +33,7 @@ typedef SSIZE_T ssize_t;
 using json = nlohmann::json;
 json j;
 bool onlineupdate = true;
-/* Var */
-static constexpr size_t UpdateTaskBufferSize = 0x100000;
-AsyncResult m_prepare_result;
 
-std::string Updatepath;
-UpdateState m_UpdateState = UpdateState::NothingToDo;
-
-/* Var */
 Result Init_Services(void)
 {
 	Result ret = 0;
@@ -59,26 +52,6 @@ Result Init_Services(void)
 		return 1;
 	}
 	return ret;
-}
-
-void installUpdate(char *path)
-{
-	if (m_UpdateState == UpdateState::NeedsSetup)
-	{
-		if (R_FAILED(amssuSetupUpdate(nullptr, UpdateTaskBufferSize, path, true)))
-		{
-			brls::Application::crash("Fallo al hacer el setup del update");
-		}
-		m_UpdateState = UpdateState::NeedsPrepare;
-	}
-	else if (m_UpdateState == UpdateState::NeedsPrepare)
-	{
-		if (R_FAILED(amssuRequestPrepareUpdate(&m_prepare_result)))
-		{
-			brls::Application::crash("Fallo al preparar el update");
-		}
-	}
-	//else if (m_UpdateState == UpdateState::NeedsPrepare)
 }
 
 void close_Services()
@@ -152,7 +125,6 @@ int main(int argc, char *argv[])
 	}
 
 	brls::ListItem *UpdateOnlineItem = new brls::ListItem("System Update", firmwarever);
-	brls::ListItem *UpdateOfflineItem = new brls::ListItem("System Update Offline");
 	UpdateOnlineItem->getClickEvent()->subscribe([](brls::View *view) {
 		//download
 		brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
@@ -163,8 +135,9 @@ int main(int argc, char *argv[])
 			std::string download = "http://192.168.1.128/" + j["intfw"].get<std::string>();
 			brls::Logger::debug(download);
 			net.Download(download, "/switch/Sys-Updater/temp.json");
-			stagedFrame->addStage(new InstallUpdatePage(stagedFrame, "Go to step 2"));
+			stagedFrame->addStage(new PreInstallUpdatePage(stagedFrame, "Download Update"));
 			stagedFrame->addStage(new DownloadUpdatePage(stagedFrame));
+			stagedFrame->addStage(new InstallUpdate(stagedFrame));
 			//meme.m_Download = true;
 		}
 		else
@@ -173,25 +146,34 @@ int main(int argc, char *argv[])
 		}
 		brls::Application::pushView(stagedFrame);
 	});
+	brls::ListItem *UpdateOfflineItem = new brls::ListItem("System Update Offline");
 	UpdateOfflineItem->getClickEvent()->subscribe([](brls::View *view) {
-		//installUpdate("/switch/Sys-Updater/temp/");
+		//download
+		brls::StagedAppletFrame *stagedFrame1 = new brls::StagedAppletFrame();
+		stagedFrame1->setTitle("System Updater");
+		if (onlineupdate == true)
+		{
+			stagedFrame1->addStage(new InstallUpdate(stagedFrame1));
+			//meme.m_Download = true;
+		}
+		brls::Application::pushView(stagedFrame1);
 	});
 	mainlist->addView(UpdateOnlineItem);
 	mainlist->addView(UpdateOfflineItem);
 
 	// Settings Tab
-	brls::List *Settingslist = new brls::List();
+	/*brls::List *Settingslist = new brls::List();
 
 	brls::ListItem *MemeItem = new brls::ListItem("Memes");
 	brls::SelectListItem *TypeUpdateItem = new brls::SelectListItem(
 		"Update",
 		{"Nintendo", "Atmosphere"}, 0, "memes");
 	Settingslist->addView(MemeItem);
-	Settingslist->addView(TypeUpdateItem);
+	Settingslist->addView(TypeUpdateItem);*/
 	// add in the root MemeItem the tabs
 	rootFrame->addTab("Firmware", mainlist);
 	rootFrame->addSeparator();
-	rootFrame->addTab("Settings", Settingslist);
+	//rootFrame->addTab("Settings", Settingslist);
 
 	// Add the root view to the stack
 	brls::Application::pushView(rootFrame);

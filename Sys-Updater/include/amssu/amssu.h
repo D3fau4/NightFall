@@ -31,7 +31,7 @@ extern "C"
 
     enum UpdateState
     {
-        NothingToDo,
+        NeedsValidate,
         NeedsSetup,
         NeedsPrepare,
         AwaitingPrepare,
