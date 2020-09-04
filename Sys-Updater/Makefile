@@ -38,6 +38,9 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
 TARGET				:=	$(notdir $(CURDIR))
+APP_TITLE 			:= 	Sys-Updater
+APP_AUTHOR 			:= 	D3fau4
+APP_VERSION 		:= 	Alpha
 BUILD				:=	build
 SOURCES				:=	source source/amssu source/sm source/FS source/net source/UI
 DATA				:=	data
