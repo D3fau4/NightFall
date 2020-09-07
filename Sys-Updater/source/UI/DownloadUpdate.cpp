@@ -85,44 +85,6 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
     this->label1->frame(ctx);
 }
 
-void DownloadUpdatePage::DownloadUpdate(void)
-{
-    Network::Net net = Network::Net();
-    auto v7 = jso1n["titleids"].get<std::vector<std::string>>();
-    int n = v7.size();
-    for (int i = 0; i < n; i++)
-    {
-        if (jso1n["programid"][v7[i]].contains("Program") == true)
-        {
-            std::string download = "http://192.168.1.128/c/c/" + jso1n["programid"][v7[i]]["Program"].get<std::string>();
-            brls::Logger::debug(download);
-            std::string out = "/switch/Sys-Updater/temp/" + jso1n["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
-            net.Download(download, out);
-        }
-        else if (jso1n["programid"][v7[i]].contains("Data") == true)
-        {
-            std::string download = "http://192.168.1.128/c/c/" + jso1n["programid"][v7[i]]["Data"].get<std::string>();
-            brls::Logger::debug(download);
-            std::string out = "/switch/Sys-Updater/temp/" + jso1n["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
-            net.Download(download, out);
-        }
-        else if (jso1n["programid"][v7[i]].contains("PublicData") == true)
-        {
-            std::string download = "http://192.168.1.128/c/c/" + jso1n["programid"][v7[i]]["PublicData"].get<std::string>();
-            brls::Logger::debug(download);
-            std::string out = "/switch/Sys-Updater/temp/" + jso1n["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
-            net.Download(download, out);
-        }
-        if (jso1n["programid"][v7[i]].contains("Meta") == true)
-        {
-            std::string download = "http://192.168.1.128/c/a/" + jso1n["programid"][v7[i]]["Meta"].get<std::string>();
-            brls::Logger::debug(download);
-            std::string out = "/switch/Sys-Updater/temp/" + jso1n["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
-            net.Download(download, out);
-        }
-    }
-}
-
 void DownloadUpdatePage::layout(NVGcontext *vg, brls::Style *style, brls::FontStash *stash)
 {
     this->label->setWidth(roundf((float)this->width * style->CrashFrame.labelWidth));

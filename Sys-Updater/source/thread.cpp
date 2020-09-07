@@ -28,6 +28,7 @@ SOFTWARE.*/
 
 /* Var */
 json V1;
+json config;
 static constexpr size_t UpdateTaskBufferSize = 0x100000;
 AsyncResult m_prepare_result;
 
@@ -63,13 +64,15 @@ namespace BackGround
             {
                 std::ifstream i("/switch/Sys-Updater/temp.json");
                 i >> V1;
+                std::ifstream o("/switch/Sys-Updater/config.json");
+                o >> config;
                 auto v7 = V1["titleids"].get<std::vector<std::string>>();
                 int n = v7.size();
                 for (int i = 0; i < n; i++)
                 {
                     if (V1["programid"][v7[i]].contains("Program") == true)
                     {
-                        std::string download = "http://192.168.1.128/c/c/" + V1["programid"][v7[i]]["Program"].get<std::string>();
+                        std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Program"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
                         if (net.Download(download, out) == true)
@@ -81,7 +84,7 @@ namespace BackGround
                     }
                     else if (V1["programid"][v7[i]].contains("Data") == true)
                     {
-                        std::string download = "http://192.168.1.128/c/c/" + V1["programid"][v7[i]]["Data"].get<std::string>();
+                        std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Data"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
                         if (net.Download(download, out) == true)
@@ -93,7 +96,7 @@ namespace BackGround
                     }
                     else if (V1["programid"][v7[i]].contains("PublicData") == true)
                     {
-                        std::string download = "http://192.168.1.128/c/c/" + V1["programid"][v7[i]]["PublicData"].get<std::string>();
+                        std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["PublicData"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
                         if (net.Download(download, out) == true)
@@ -105,7 +108,7 @@ namespace BackGround
                     }
                     if (V1["programid"][v7[i]].contains("Meta") == true)
                     {
-                        std::string download = "http://192.168.1.128/c/a/" + V1["programid"][v7[i]]["Meta"].get<std::string>();
+                        std::string download = config["URL"].get<std::string>() + "c/a/" + V1["programid"][v7[i]]["Meta"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
                         if (net.Download(download, out) == true)

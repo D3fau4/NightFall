@@ -35,6 +35,7 @@ SOFTWARE.*/
 
 using json = nlohmann::json;
 json j;
+json Conf;
 bool onlineupdate = true;
 
 Result Init_Services(void)
@@ -86,8 +87,11 @@ int main(int argc, char *argv[])
 	BackGround::BackgroundTasks meme;
 	//meme.BackgroundTasks();
 	Network::Net net = Network::Net();
+	std::ifstream o("/switch/Sys-Updater/config.json");
+	o >> Conf;
 	brls::Logger::setLogLevel(brls::LogLevel::DEBUG);
-	net.Download("http://192.168.1.128/info", "/switch/Sys-Updater/actual.json");
+	std::string downloadlink = Conf["URL"].get<std::string>() + "info";
+	net.Download(downloadlink, "/switch/Sys-Updater/actual.json");
 	std::ifstream i("/switch/Sys-Updater/actual.json");
 	i >> j;
 	if (!brls::Application::init("Sys-Updater"))
@@ -135,7 +139,7 @@ int main(int argc, char *argv[])
 		if (onlineupdate == true)
 		{
 			Network::Net net = Network::Net();
-			std::string download = "http://192.168.1.128/" + j["intfw"].get<std::string>();
+			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();
 			brls::Logger::debug(download);
 			net.Download(download, "/switch/Sys-Updater/temp.json");
 			stagedFrame->addStage(new PreInstallUpdatePage(stagedFrame, "Download Update"));
