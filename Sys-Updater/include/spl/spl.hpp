@@ -21,5 +21,6 @@ SOFTWARE.*/
 #pragma once
 
 namespace spl {
-    /* TODO */
+    char *GetHardwareType(void);
+    bool HasRCMbug(void);
 }

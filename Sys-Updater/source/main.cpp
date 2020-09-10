@@ -30,6 +30,7 @@ SOFTWARE.*/
 #include "net/net.hpp"
 #include "FS/FS.hpp"
 #include "sm/sm.hpp"
+#include "spl/spl.hpp"
 #include "amssu/amssu.h"
 #include "thread.hpp"
 
@@ -37,7 +38,7 @@ using json = nlohmann::json;
 json j;
 json Conf;
 bool onlineupdate = true;
-
+bool is_patched = false;
 Result Init_Services(void)
 {
 	Result ret = 0;
@@ -52,6 +53,10 @@ Result Init_Services(void)
 		return 1;
 	}
 	if (R_FAILED(ret = amssuInitialize()))
+	{
+		return 1;
+	}
+	if (R_FAILED(ret = smInitialize()))
 	{
 		return 1;
 	}
@@ -85,7 +90,6 @@ int main(int argc, char *argv[])
 	InitFolders();
 	// init
 	BackGround::BackgroundTasks meme;
-	//meme.BackgroundTasks();
 	Network::Net net = Network::Net();
 	std::ifstream o("/switch/Sys-Updater/config.json");
 	o >> Conf;
@@ -105,6 +109,19 @@ int main(int argc, char *argv[])
 	{
 		brls::Application::crash("The software was closed because an error occured:\nSIGABRT (signal 6)");
 		return EXIT_FAILURE;
+	}
+	/* Check if is atmosphere */
+	if (sm::isRunning("rnx") || sm::isRunning("tx"))
+	{
+		brls::Logger::error("The software was closed because only works in atmosphere");
+		return EXIT_FAILURE;
+	}
+	 /*Check if is Ipatched/Mariko */
+	if (spl::GetHardwareType() == "Mariko" || spl::HasRCMbug()){
+		brls::Logger::error("The software was closed because only works in non-patched/mariko");
+		is_patched = true;
+	} else {
+		brls::Logger::debug("Erista non patched");
 	}
 
 	// Create a view
@@ -136,7 +153,7 @@ int main(int argc, char *argv[])
 		//download
 		brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
 		stagedFrame->setTitle("System Updater");
-		if (onlineupdate == true)
+		if (onlineupdate == true && is_patched == false)
 		{
 			Network::Net net = Network::Net();
 			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();
@@ -145,7 +162,6 @@ int main(int argc, char *argv[])
 			stagedFrame->addStage(new PreInstallUpdatePage(stagedFrame, "Download Update"));
 			stagedFrame->addStage(new DownloadUpdatePage(stagedFrame));
 			stagedFrame->addStage(new InstallUpdate(stagedFrame));
-			//meme.m_Download = true;
 		}
 		else
 		{

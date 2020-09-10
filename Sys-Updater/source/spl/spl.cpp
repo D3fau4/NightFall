@@ -25,15 +25,33 @@ SOFTWARE.*/
 
 namespace spl
 {
+    static constexpr u32 ExosphereHasRcmBugPatch = 65004;
     char *GetHardwareType(void)
     {
         Result ret = 0;
         u64 hardware_type = 4;
+        char *hardware[] = {
+            "Icosa",
+            "Copper",
+            "Hoag",
+            "Mariko",
+            "Unknown"};
 
-        if (R_FAILED(rc = splGetConfig(SplConfigItem_HardwareType, &hardware_type)))
+        if (R_FAILED(ret = splGetConfig(SplConfigItem_HardwareType, &hardware_type)))
         {
-            //ChangeMenu(std::make_shared<ErrorMenu>("An error has occurred", "Failed to get hardware type.", rc));
-            return;
+            return hardware[4];
+        }
+        else
+
+            return hardware[hardware_type];
+    }
+    bool HasRCMbug(void)
+    {
+        Result ret = 0;
+        u64 has_rcm_bug_patch;
+        if (R_SUCCEEDED(ret = splGetConfig(static_cast<SplConfigItem>(ExosphereHasRcmBugPatch), &has_rcm_bug_patch)))
+        {
+            return has_rcm_bug_patch;
         }
     }
 } // namespace spl
