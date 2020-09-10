@@ -78,6 +78,7 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
     else if (Download.m_Download != true)
     {
         Download.m_Download = true;
+        brls::Application::setGlobalQuit(true);
     }
     this->progressDisp->setProgress(Download.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
     this->progressDisp->frame(ctx);

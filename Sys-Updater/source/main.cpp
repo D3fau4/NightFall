@@ -37,7 +37,7 @@ SOFTWARE.*/
 using json = nlohmann::json;
 json j;
 json Conf;
-bool onlineupdate = true;
+bool onlineupdate = false;
 bool is_patched = false;
 Result Init_Services(void)
 {
@@ -65,13 +65,16 @@ Result Init_Services(void)
 
 void close_Services()
 {
+	brls::Logger::debug("Closing Services");
 	setsysExit();
 	amssuExit();
 	splExit();
+	smExit();
 }
 
 void deletetemp()
 {
+	brls::Logger::debug("Deleting temporal folders");
 	FS::DeleteDir("/switch/Sys-Updater/temp/");
 	FS::DeleteFile("/switch/Sys-Updater/temp.json");
 }
@@ -93,6 +96,7 @@ int main(int argc, char *argv[])
 	Network::Net net = Network::Net();
 	std::ifstream o("/switch/Sys-Updater/config.json");
 	o >> Conf;
+	o.close();
 	brls::Logger::setLogLevel(brls::LogLevel::DEBUG);
 	std::string downloadlink = Conf["URL"].get<std::string>() + "info";
 	net.Download(downloadlink, "/switch/Sys-Updater/actual.json");
@@ -116,11 +120,14 @@ int main(int argc, char *argv[])
 		brls::Logger::error("The software was closed because only works in atmosphere");
 		return EXIT_FAILURE;
 	}
-	 /*Check if is Ipatched/Mariko */
-	if (spl::GetHardwareType() == "Mariko" || spl::HasRCMbug()){
+	/*Check if is Ipatched/Mariko */
+	if (spl::GetHardwareType() == "Mariko" || spl::HasRCMbug())
+	{
 		brls::Logger::error("The software was closed because only works in non-patched/mariko");
 		is_patched = true;
-	} else {
+	}
+	else
+	{
 		brls::Logger::debug("Erista non patched");
 	}
 
@@ -142,10 +149,12 @@ int main(int argc, char *argv[])
 	if (j["Firmwver"].get<std::string>() == ver.display_version)
 	{
 		std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
+		onlineupdate = false;
 	}
 	else
 	{
 		std::snprintf(firmwarever, sizeof(firmwarever), "Se necesita update");
+		onlineupdate = true;
 	}
 
 	brls::ListItem *UpdateOnlineItem = new brls::ListItem("System Update", firmwarever);
@@ -166,6 +175,11 @@ int main(int argc, char *argv[])
 		else
 		{
 			// añadir pantalla de "sistema actualizado"
+			if(is_patched == false) {
+				stagedFrame->addStage(new UpToDate(stagedFrame, "You are up to date."));
+			} else {
+				stagedFrame->addStage(new UpToDate(stagedFrame, "Sorry :("));
+			}
 		}
 		brls::Application::pushView(stagedFrame);
 	});
@@ -185,29 +199,35 @@ int main(int argc, char *argv[])
 	mainlist->addView(UpdateOfflineItem);
 
 	// Settings Tab
-	/*brls::List *Settingslist = new brls::List();
+	brls::List *Settingslist = new brls::List();
 
-	brls::ListItem *MemeItem = new brls::ListItem("Memes");
-	brls::SelectListItem *TypeUpdateItem = new brls::SelectListItem(
-		"Update",
-		{"Nintendo", "Atmosphere"}, 0, "memes");
-	Settingslist->addView(MemeItem);
-	Settingslist->addView(TypeUpdateItem);*/
+	brls::SelectListItem *wantExfat = new brls::SelectListItem(
+		"Exfat",
+		{"No", "Yes"}, 0, "Do you want exfat updates?");
+	wantExfat->setSelectedValue(Conf["Exfat"].get<int>());
+
+	Settingslist->addView(wantExfat);
 	// add in the root MemeItem the tabs
 	rootFrame->addTab("Firmware", mainlist);
 	rootFrame->addSeparator();
-	//rootFrame->addTab("Settings", Settingslist);
+	rootFrame->addTab("Settings", Settingslist);
 
 	// Add the root view to the stack
 	brls::Application::pushView(rootFrame);
 
 	// Run the app
 	while (brls::Application::mainLoop())
-		;
+	{
+		if (wantExfat->getSelectedValue() != Conf["Exfat"].get<int>())
+		{
+			brls::Logger::debug("he cambiado el valor");
+			Conf["Exfat"] = wantExfat->getSelectedValue();
+			std::ofstream out("/switch/Sys-Updater/config.json");
+			out << Conf;
+			out.close();
+		}
+	}
 	close_Services();
-	brls::Logger::debug("iniciando Finalizado del thread");
-
-	brls::Logger::debug("Finalizado thread");
 	deletetemp();
 	// Exit
 	return EXIT_SUCCESS;

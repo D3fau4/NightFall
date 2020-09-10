@@ -138,7 +138,12 @@ namespace BackGround
                 }
                 if (m_UpdateState == UpdateState::NeedsSetup)
                 {
-                    if (R_FAILED(amssuSetupUpdate(nullptr, UpdateTaskBufferSize, "/switch/Sys-Updater/temp/", true)))
+                    bool WantExfat = config["Exfat"].get<int>();
+                    if (WantExfat == true)
+                        brls::Logger::debug("Update Exfat");
+                    else
+                        brls::Logger::debug("Update No Exfat");
+                    if (R_FAILED(amssuSetupUpdate(nullptr, UpdateTaskBufferSize, "/switch/Sys-Updater/temp/", WantExfat)))
                     {
                         brls::Application::crash("Fallo al hacer el setup");
                         //return EXIT_FAILURE;
