@@ -29,6 +29,7 @@ InstallUpdate::InstallUpdate(brls::StagedAppletFrame *frame)
     : frame(frame)
 {
     // Label
+    brls::Application::setGlobalQuit(false);
     this->progressDisp = new brls::ProgressDisplay();
     this->progressDisp->setProgress(0, 100);
     this->progressDisp->setParent(this);
@@ -39,6 +40,8 @@ InstallUpdate::InstallUpdate(brls::StagedAppletFrame *frame)
     this->label1 = new brls::Label(brls::LabelStyle::DESCRIPTION, version_str);
     this->label1->setHorizontalAlign(NVG_ALIGN_CENTER);
     this->label1->setParent(this);
+    /* Prevent the home button from being pressed during installation. */
+    hiddbgDeactivateHomeButton();
 }
 
 InstallUpdate::~InstallUpdate()

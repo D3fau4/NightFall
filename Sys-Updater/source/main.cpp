@@ -60,6 +60,10 @@ Result Init_Services(void)
 	{
 		return 1;
 	}
+	if (R_FAILED(ret = hiddbgInitialize()))
+	{
+		return 1;
+	}
 	return ret;
 }
 
@@ -70,6 +74,7 @@ void close_Services()
 	amssuExit();
 	splExit();
 	smExit();
+	hiddbgExit();
 }
 
 void deletetemp()
@@ -149,7 +154,7 @@ int main(int argc, char *argv[])
 	if (j["Firmwver"].get<std::string>() == ver.display_version)
 	{
 		std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
-		onlineupdate = false;
+		onlineupdate = true;
 	}
 	else
 	{
@@ -175,9 +180,12 @@ int main(int argc, char *argv[])
 		else
 		{
 			// añadir pantalla de "sistema actualizado"
-			if(is_patched == false) {
+			if (is_patched == false)
+			{
 				stagedFrame->addStage(new UpToDate(stagedFrame, "You are up to date."));
-			} else {
+			}
+			else
+			{
 				stagedFrame->addStage(new UpToDate(stagedFrame, "Sorry :("));
 			}
 		}

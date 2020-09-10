@@ -37,6 +37,7 @@ DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
     // Label
     std::ifstream i("/switch/Sys-Updater/temp.json");
     i >> jso1n;
+    brls::Application::setGlobalQuit(false);
     this->progressDisp = new brls::ProgressDisplay();
     this->progressDisp->setProgress(Download.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
     this->progressDisp->setParent(this);
@@ -46,6 +47,8 @@ DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
     this->label1 = new brls::Label(brls::LabelStyle::DESCRIPTION, "Firmware: " + jso1n["fw_info"]["version"].get<std::string>());
     this->label1->setHorizontalAlign(NVG_ALIGN_CENTER);
     this->label1->setParent(this);
+    /* Prevent the home button from being pressed during installation. */
+    hiddbgDeactivateHomeButton();
 }
 
 void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsigned height, brls::Style *style, brls::FrameContext *ctx)
@@ -54,21 +57,21 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
     {
         Download.m_Download = false;
         brls::Dialog *dialog = new brls::Dialog("Warning: do you want to proceed?");
-            brls::GenericEvent::Callback ContinueCallback = [dialog](brls::View *view) {
-                dialog->close();
-                nextframe = true;
-            };
-            brls::GenericEvent::Callback cancelCallback = [dialog](brls::View *view) {
-                dialog->close();
-                return EXIT_SUCCESS;
-            };
-            if (nextframe == true)
-            {
-                this->frame->nextStage();
-            }
-            dialog->addButton("Continue", ContinueCallback);
-            dialog->addButton("Cancel", cancelCallback);
-            dialog->setCancelable(false);
+        brls::GenericEvent::Callback ContinueCallback = [dialog](brls::View *view) {
+            dialog->close();
+            nextframe = true;
+        };
+        brls::GenericEvent::Callback cancelCallback = [dialog](brls::View *view) {
+            dialog->close();
+            return EXIT_SUCCESS;
+        };
+        if (nextframe == true)
+        {
+            this->frame->nextStage();
+        }
+        dialog->addButton("Continue", ContinueCallback);
+        dialog->addButton("Cancel", cancelCallback);
+        dialog->setCancelable(false);
         if (showdialog != true)
         {
             showdialog = true;
@@ -78,7 +81,6 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
     else if (Download.m_Download != true)
     {
         Download.m_Download = true;
-        brls::Application::setGlobalQuit(true);
     }
     this->progressDisp->setProgress(Download.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
     this->progressDisp->frame(ctx);
