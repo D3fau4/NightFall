@@ -47,7 +47,6 @@ Result Init_Services(void)
 	{
 		return 1;
 	}
-
 	if (R_FAILED(ret = splInitialize()))
 	{
 		return 1;
@@ -99,18 +98,28 @@ int main(int argc, char *argv[])
 	// init
 	BackGround::BackgroundTasks meme;
 	Network::Net net = Network::Net();
-	std::ifstream o("/switch/Sys-Updater/config.json");
-	o >> Conf;
-	o.close();
+
 	brls::Logger::setLogLevel(brls::LogLevel::DEBUG);
-	std::string downloadlink = Conf["URL"].get<std::string>() + "info";
-	net.Download(downloadlink, "/switch/Sys-Updater/actual.json");
-	std::ifstream i("/switch/Sys-Updater/actual.json");
-	i >> j;
 	if (!brls::Application::init("Sys-Updater"))
 	{
 		brls::Logger::error("Unable to init Borealis application");
 		return EXIT_FAILURE;
+	}
+
+	// get config
+	if (R_SUCCEEDED(FS::checkFile("/switch/Sys-Updater/config.json")))
+	{
+		brls::Logger::debug("Debo de crear config");
+		std::ifstream o("romfs:/config.json");
+		o >> Conf;
+		o.close();
+	}
+	else
+	{
+		brls::Logger::debug("no Debo de crear config");
+		std::ifstream o("/switch/Sys-Updater/config.json");
+		o >> Conf;
+		o.close();
 	}
 
 	/* Initialize Services */
@@ -136,6 +145,14 @@ int main(int argc, char *argv[])
 		brls::Logger::debug("Erista non patched");
 	}
 
+	// get server info
+	std::string downloadlink = Conf["URL"].get<std::string>() + "info";
+	brls::Logger::debug(downloadlink);
+	net.Download(downloadlink, "/switch/Sys-Updater/actual.json");
+	std::ifstream i("/switch/Sys-Updater/actual.json");
+	i >> j;
+	i.close();
+
 	// Create a view
 	brls::TabFrame *rootFrame = new brls::TabFrame();
 	rootFrame->setTitle("Sys-Updater");
@@ -154,7 +171,7 @@ int main(int argc, char *argv[])
 	if (j["Firmwver"].get<std::string>() == ver.display_version)
 	{
 		std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
-		onlineupdate = true;
+		onlineupdate = false;
 	}
 	else
 	{

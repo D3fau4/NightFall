@@ -25,8 +25,10 @@ SOFTWARE.*/
 #include <vector>
 #include <switch.h>
 #include <filesystem>
+#include "json.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 
 extern FsFileSystem *fs;
 extern FsFileSystem devices[4];
@@ -36,5 +38,7 @@ namespace FS {
     bool checkdirexist(string path);
     Result DeleteDir(string path);
     Result createFile(string path);
+    Result checkFile(string path);
     Result DeleteFile(string path);
+    Result writeConfig();
 };

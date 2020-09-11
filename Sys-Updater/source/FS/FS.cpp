@@ -23,9 +23,12 @@ SOFTWARE.*/
 #include <stdlib.h>
 #include <string.h>
 #include <switch.h>
+#include <fstream>
 #include <sys/stat.h>
 #include <unistd.h>
 #include "FS/FS.hpp"
+
+json temp;
 
 namespace FS
 {
@@ -39,12 +42,13 @@ namespace FS
 		return 1;
 	}
 
-	Result DeleteDir(string path){
+	Result DeleteDir(string path)
+	{
 		std::filesystem::remove_all(path);
 		rmdir(path.c_str());
 		return 0;
 	}
-	
+
 	bool checkdirexist(string path)
 	{
 		bool exist = false;
@@ -69,9 +73,33 @@ namespace FS
 		return 1;
 	}
 
-	Result DeleteFile(string path){
+	Result checkFile(string path)
+	{
+		FILE *f;
+		f = fopen(path.c_str(), "r");
+		if (f)
+		{
+			fclose(f);
+			return 1;
+		}
+		return 0;
+	}
+
+	Result DeleteFile(string path)
+	{
 		std::filesystem::remove(path);
 		return 0;
 	}
-	
+
+	Result writeConfig()
+	{
+		std::ifstream rom("romfs:/config.json");
+		rom >> temp;
+		std::ofstream sd("/switch/Sys-Updater/config.json");
+		sd << temp;
+		sd.close();
+		rom.close();
+		return 0;
+	}
+
 } // namespace FS
