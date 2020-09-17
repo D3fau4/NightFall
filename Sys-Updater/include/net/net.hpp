@@ -25,11 +25,14 @@ SOFTWARE.*/
 #include <switch.h>
 
 using namespace std;
-namespace Network{
-    class Net {
+namespace Network
+{
+    class Net
+    {
     public:
         Net();
         string Request(string method, string url);
         bool Download(string url, string filepath);
-};
-}
+        bool HasInternet();
+    };
+} // namespace Network

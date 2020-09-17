@@ -63,6 +63,10 @@ Result Init_Services(void)
 	{
 		return 1;
 	}
+	if (R_FAILED(ret = nifmInitialize(NifmServiceType_Admin)))
+	{
+		return 1;
+	}
 	return ret;
 }
 
@@ -74,6 +78,7 @@ void close_Services()
 	splExit();
 	smExit();
 	hiddbgExit();
+	nifmExit();
 }
 
 void deletetemp()
@@ -87,6 +92,7 @@ void InitFolders()
 {
 	if (R_SUCCEEDED(FS::createdir("/switch/Sys-Updater/")))
 		brls::Logger::debug("se ha creado la carpeta");
+	deletetemp();
 	if (R_SUCCEEDED(FS::createdir("/switch/Sys-Updater/temp/")))
 		brls::Logger::debug("se ha creado la carpeta");
 }
@@ -146,12 +152,15 @@ int main(int argc, char *argv[])
 	}
 
 	// get server info
-	std::string downloadlink = Conf["URL"].get<std::string>() + "info";
-	brls::Logger::debug(downloadlink);
-	net.Download(downloadlink, "/switch/Sys-Updater/actual.json");
-	std::ifstream i("/switch/Sys-Updater/actual.json");
-	i >> j;
-	i.close();
+	if (net.HasInternet() == true)
+	{
+		std::string downloadlink = Conf["URL"].get<std::string>() + "info";
+		brls::Logger::debug(downloadlink);
+		net.Download(downloadlink, "/switch/Sys-Updater/actual.json");
+		std::ifstream i("/switch/Sys-Updater/actual.json");
+		i >> j;
+		i.close();
+	}
 
 	// Create a view
 	brls::TabFrame *rootFrame = new brls::TabFrame();
@@ -168,15 +177,23 @@ int main(int argc, char *argv[])
 		return NULL;
 	}
 	char firmwarever[0x43];
-	if (j["Firmwver"].get<std::string>() == ver.display_version)
+	if (j["Firmwver"].empty() == false)
 	{
-		std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
-		onlineupdate = false;
+		if (j["Firmwver"].get<std::string>() == ver.display_version)
+		{
+			std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
+			onlineupdate = false;
+		}
+		else
+		{
+			std::snprintf(firmwarever, sizeof(firmwarever), "Se necesita update");
+			onlineupdate = true;
+		}
 	}
 	else
 	{
-		std::snprintf(firmwarever, sizeof(firmwarever), "Se necesita update");
-		onlineupdate = true;
+		std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
+		onlineupdate = false;
 	}
 
 	brls::ListItem *UpdateOnlineItem = new brls::ListItem("System Update", firmwarever);
