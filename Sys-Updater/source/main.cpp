@@ -115,14 +115,13 @@ int main(int argc, char *argv[])
 	// get config
 	if (R_SUCCEEDED(FS::checkFile("/switch/Sys-Updater/config.json")))
 	{
-		brls::Logger::debug("Debo de crear config");
+		brls::Logger::debug("Create Config");
 		std::ifstream o("romfs:/config.json");
 		o >> Conf;
 		o.close();
 	}
 	else
 	{
-		brls::Logger::debug("no Debo de crear config");
 		std::ifstream o("/switch/Sys-Updater/config.json");
 		o >> Conf;
 		o.close();
@@ -131,7 +130,7 @@ int main(int argc, char *argv[])
 	/* Initialize Services */
 	if (R_FAILED(Init_Services()))
 	{
-		brls::Application::crash("The software was closed because an error occured:\nSIGABRT (signal 6)");
+		brls::Application::crash("The services cant start");
 		return EXIT_FAILURE;
 	}
 	/* Check if is atmosphere */
@@ -186,7 +185,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			std::snprintf(firmwarever, sizeof(firmwarever), "Se necesita update");
+			std::snprintf(firmwarever, sizeof(firmwarever), "Update required");
 			onlineupdate = true;
 		}
 	}
@@ -200,7 +199,7 @@ int main(int argc, char *argv[])
 	UpdateOnlineItem->getClickEvent()->subscribe([](brls::View *view) {
 		//download
 		brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
-		stagedFrame->setTitle("System Updater");
+		stagedFrame->setTitle("System Update");
 		if (onlineupdate == true && is_patched == false)
 		{
 			Network::Net net = Network::Net();
@@ -220,7 +219,7 @@ int main(int argc, char *argv[])
 			}
 			else
 			{
-				stagedFrame->addStage(new UpToDate(stagedFrame, "Sorry :("));
+				stagedFrame->addStage(new UpToDate(stagedFrame, "Sorry i dont support patched units :("));
 			}
 		}
 		brls::Application::pushView(stagedFrame);
@@ -238,7 +237,7 @@ int main(int argc, char *argv[])
 		brls::Application::pushView(stagedFrame1);
 	});
 	mainlist->addView(UpdateOnlineItem);
-	mainlist->addView(UpdateOfflineItem);
+	//mainlist->addView(UpdateOfflineItem);
 
 	// Settings Tab
 	brls::List *Settingslist = new brls::List();
@@ -248,6 +247,29 @@ int main(int argc, char *argv[])
 		{"No", "Yes"}, 0, "Do you want exfat updates?");
 	wantExfat->setSelectedValue(Conf["Exfat"].get<int>());
 
+	brls::ListItem *Serverurl = new brls::ListItem("Server", "Change the URL");
+	Serverurl->getClickEvent()->subscribe([](brls::View *view) {
+		SwkbdConfig kbd;
+		char tmpoutstr[50] = {0};
+		Result rc = swkbdCreate(&kbd, 0);
+		if (R_SUCCEEDED(rc))
+		{
+			swkbdConfigMakePresetDefault(&kbd);
+			swkbdConfigSetInitialText(&kbd, Conf["URL"].get<std::string>().c_str());
+			rc = swkbdShow(&kbd, tmpoutstr, sizeof(tmpoutstr));
+
+			if (R_SUCCEEDED(rc))
+			{
+				brls::Logger::debug(tmpoutstr);
+				Conf["URL"] = tmpoutstr;
+			}
+
+			swkbdClose(&kbd);
+		}
+	});
+	Serverurl->setValue(Conf["URL"].get<std::string>());
+
+	Settingslist->addView(Serverurl);
 	Settingslist->addView(wantExfat);
 	// add in the root MemeItem the tabs
 	rootFrame->addTab("Firmware", mainlist);
@@ -262,11 +284,27 @@ int main(int argc, char *argv[])
 	{
 		if (wantExfat->getSelectedValue() != Conf["Exfat"].get<int>())
 		{
-			brls::Logger::debug("he cambiado el valor");
 			Conf["Exfat"] = wantExfat->getSelectedValue();
 			std::ofstream out("/switch/Sys-Updater/config.json");
 			out << Conf;
 			out.close();
+		}
+		if (Serverurl->getValue() != Conf["URL"].get<std::string>())
+		{
+			Serverurl->setValue(Conf["URL"].get<std::string>());
+			std::ofstream out("/switch/Sys-Updater/config.json");
+			out << Conf;
+			out.close();
+
+			if (net.HasInternet() == true)
+			{
+				std::string downloadlink = Conf["URL"].get<std::string>() + "info";
+				brls::Logger::debug(downloadlink);
+				net.Download(downloadlink, "/switch/Sys-Updater/actual.json");
+				std::ifstream i("/switch/Sys-Updater/actual.json");
+				i >> j;
+				i.close();
+			}
 		}
 	}
 	close_Services();

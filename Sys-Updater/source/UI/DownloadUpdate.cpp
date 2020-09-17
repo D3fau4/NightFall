@@ -30,6 +30,7 @@ SOFTWARE.*/
 json jso1n;
 BackGround::BackgroundTasks Download;
 bool nextframe = false;
+bool prevframe = false;
 bool showdialog = false;
 DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
     : frame(frame)
@@ -63,11 +64,15 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
         };
         brls::GenericEvent::Callback cancelCallback = [dialog](brls::View *view) {
             dialog->close();
-            return EXIT_SUCCESS;
+            prevframe = true;
         };
         if (nextframe == true)
         {
             this->frame->nextStage();
+        }
+        if (prevframe == true)
+        {
+            this->frame->previousStage();
         }
         dialog->addButton("Continue", ContinueCallback);
         dialog->addButton("Cancel", cancelCallback);
