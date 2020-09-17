@@ -36,7 +36,7 @@ DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
     : frame(frame)
 {
     // Label
-    std::ifstream i("/switch/Sys-Updater/temp.json");
+    std::ifstream i("/switch/NightFall/temp.json");
     i >> jso1n;
     brls::Application::setGlobalQuit(false);
     this->progressDisp = new brls::ProgressDisplay();

@@ -1,4 +1,4 @@
-# Sys-Updater
+# NightFall
 A (online) System Updater for Nintendo Switch made whit [borealis](https://github.com/natinusala/borealis)
 
 ### :warning: Warning: the program is in WIP and may can crash.

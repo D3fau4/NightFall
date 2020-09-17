@@ -84,16 +84,16 @@ void close_Services()
 void deletetemp()
 {
 	brls::Logger::debug("Deleting temporal folders");
-	FS::DeleteDir("/switch/Sys-Updater/temp/");
-	FS::DeleteFile("/switch/Sys-Updater/temp.json");
+	FS::DeleteDir("/switch/NightFall/temp/");
+	FS::DeleteFile("/switch/NightFall/temp.json");
 }
 
 void InitFolders()
 {
-	if (R_SUCCEEDED(FS::createdir("/switch/Sys-Updater/")))
+	if (R_SUCCEEDED(FS::createdir("/switch/NightFall/")))
 		brls::Logger::debug("se ha creado la carpeta");
 	deletetemp();
-	if (R_SUCCEEDED(FS::createdir("/switch/Sys-Updater/temp/")))
+	if (R_SUCCEEDED(FS::createdir("/switch/NightFall/temp/")))
 		brls::Logger::debug("se ha creado la carpeta");
 }
 
@@ -106,14 +106,14 @@ int main(int argc, char *argv[])
 	Network::Net net = Network::Net();
 
 	brls::Logger::setLogLevel(brls::LogLevel::DEBUG);
-	if (!brls::Application::init("Sys-Updater"))
+	if (!brls::Application::init("NightFall"))
 	{
 		brls::Logger::error("Unable to init Borealis application");
 		return EXIT_FAILURE;
 	}
 
 	// get config
-	if (R_SUCCEEDED(FS::checkFile("/switch/Sys-Updater/config.json")))
+	if (R_SUCCEEDED(FS::checkFile("/switch/NightFall/config.json")))
 	{
 		brls::Logger::debug("Create Config");
 		std::ifstream o("romfs:/config.json");
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		std::ifstream o("/switch/Sys-Updater/config.json");
+		std::ifstream o("/switch/NightFall/config.json");
 		o >> Conf;
 		o.close();
 	}
@@ -155,15 +155,15 @@ int main(int argc, char *argv[])
 	{
 		std::string downloadlink = Conf["URL"].get<std::string>() + "info";
 		brls::Logger::debug(downloadlink);
-		net.Download(downloadlink, "/switch/Sys-Updater/actual.json");
-		std::ifstream i("/switch/Sys-Updater/actual.json");
+		net.Download(downloadlink, "/switch/NightFall/actual.json");
+		std::ifstream i("/switch/NightFall/actual.json");
 		i >> j;
 		i.close();
 	}
 
 	// Create a view
 	brls::TabFrame *rootFrame = new brls::TabFrame();
-	rootFrame->setTitle("Sys-Updater");
+	rootFrame->setTitle("NightFall");
 	rootFrame->setIcon(BOREALIS_ASSET("icon/borealis.jpg"));
 
 	// Firmware Tab
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 			Network::Net net = Network::Net();
 			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();
 			brls::Logger::debug(download);
-			net.Download(download, "/switch/Sys-Updater/temp.json");
+			net.Download(download, "/switch/NightFall/temp.json");
 			stagedFrame->addStage(new PreInstallUpdatePage(stagedFrame, "Download Update"));
 			stagedFrame->addStage(new DownloadUpdatePage(stagedFrame));
 			stagedFrame->addStage(new InstallUpdate(stagedFrame));
@@ -285,14 +285,14 @@ int main(int argc, char *argv[])
 		if (wantExfat->getSelectedValue() != Conf["Exfat"].get<int>())
 		{
 			Conf["Exfat"] = wantExfat->getSelectedValue();
-			std::ofstream out("/switch/Sys-Updater/config.json");
+			std::ofstream out("/switch/NightFall/config.json");
 			out << Conf;
 			out.close();
 		}
 		if (Serverurl->getValue() != Conf["URL"].get<std::string>())
 		{
 			Serverurl->setValue(Conf["URL"].get<std::string>());
-			std::ofstream out("/switch/Sys-Updater/config.json");
+			std::ofstream out("/switch/NightFall/config.json");
 			out << Conf;
 			out.close();
 
@@ -300,8 +300,8 @@ int main(int argc, char *argv[])
 			{
 				std::string downloadlink = Conf["URL"].get<std::string>() + "info";
 				brls::Logger::debug(downloadlink);
-				net.Download(downloadlink, "/switch/Sys-Updater/actual.json");
-				std::ifstream i("/switch/Sys-Updater/actual.json");
+				net.Download(downloadlink, "/switch/NightFall/actual.json");
+				std::ifstream i("/switch/NightFall/actual.json");
 				i >> j;
 				i.close();
 			}

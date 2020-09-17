@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.1169
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sys-Updater", "Sys-Updater\Sys-Updater.vcxproj", "{A8B2FDD7-257D-44E6-B723-14EB7BDEAA73}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NightFall", "NightFall\NightFall.vcxproj", "{A8B2FDD7-257D-44E6-B723-14EB7BDEAA73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

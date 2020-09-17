@@ -95,7 +95,7 @@ namespace FS
 	{
 		std::ifstream rom("romfs:/config.json");
 		rom >> temp;
-		std::ofstream sd("/switch/Sys-Updater/config.json");
+		std::ofstream sd("/switch/NightFall/config.json");
 		sd << temp;
 		sd.close();
 		rom.close();

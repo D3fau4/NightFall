@@ -68,7 +68,7 @@ namespace Network
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
             curl_easy_setopt(curl, CURLOPT_RESOLVE, hosts);
-            curl_easy_setopt(curl, CURLOPT_USERAGENT, "Sys-Updater");
+            curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall");
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fwrite);

@@ -62,9 +62,9 @@ namespace BackGround
         {
             if (this->m_Download == true)
             {
-                std::ifstream i("/switch/Sys-Updater/temp.json");
+                std::ifstream i("/switch/NightFall/temp.json");
                 i >> V1;
-                std::ifstream o("/switch/Sys-Updater/config.json");
+                std::ifstream o("/switch/NightFall/config.json");
                 o >> config;
                 auto v7 = V1["titleids"].get<std::vector<std::string>>();
                 int n = v7.size();
@@ -74,7 +74,7 @@ namespace BackGround
                     {
                         std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Program"].get<std::string>();
                         brls::Logger::debug(download);
-                        std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
+                        std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
                         if (net.Download(download, out) == true)
                         {
                             printf("error");
@@ -86,7 +86,7 @@ namespace BackGround
                     {
                         std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Data"].get<std::string>();
                         brls::Logger::debug(download);
-                        std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
+                        std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
                         if (net.Download(download, out) == true)
                         {
                             printf("error");
@@ -98,7 +98,7 @@ namespace BackGround
                     {
                         std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["PublicData"].get<std::string>();
                         brls::Logger::debug(download);
-                        std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
+                        std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
                         if (net.Download(download, out) == true)
                         {
                             printf("error");
@@ -110,7 +110,7 @@ namespace BackGround
                     {
                         std::string download = config["URL"].get<std::string>() + "c/a/" + V1["programid"][v7[i]]["Meta"].get<std::string>();
                         brls::Logger::debug(download);
-                        std::string out = "/switch/Sys-Updater/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
+                        std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
                         if (net.Download(download, out) == true)
                         {
                             printf("error");
@@ -125,7 +125,7 @@ namespace BackGround
             {
                 if (m_UpdateState == UpdateState::NeedsValidate)
                 {
-                    if (R_FAILED(amssuValidateUpdate(&m_validateinfo, "/switch/Sys-Updater/temp/")))
+                    if (R_FAILED(amssuValidateUpdate(&m_validateinfo, "/switch/NightFall/temp/")))
                     {
                         brls::Application::crash("No se pudo validar");
                     }
@@ -143,7 +143,7 @@ namespace BackGround
                         brls::Logger::debug("Update Exfat");
                     else
                         brls::Logger::debug("Update No Exfat");
-                    if (R_FAILED(amssuSetupUpdate(nullptr, UpdateTaskBufferSize, "/switch/Sys-Updater/temp/", WantExfat)))
+                    if (R_FAILED(amssuSetupUpdate(nullptr, UpdateTaskBufferSize, "/switch/NightFall/temp/", WantExfat)))
                     {
                         brls::Application::crash("Fallo al hacer el setup");
                         //return EXIT_FAILURE;

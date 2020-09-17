@@ -8,8 +8,8 @@
                 "C:/devkitPro/libnx/include/**",
                 "C:/devkitPro/portlibs/switch/include/**",
                 "C:/devkitPro/portlibs/switch/include/freetype2/**",
-                "${workspaceFolder}/Sys-Updater/include/**",
-                "${workspaceFolder}/Sys-Updater/borealis/library/include/**"
+                "${workspaceFolder}/NightFall/include/**",
+                "${workspaceFolder}/NightFall/borealis/library/include/**"
             ],
             "defines": [
                 "SWITCH",
@@ -31,8 +31,8 @@
                 "/opt/devkitpro/portlibs/switch/include/**",
                 "/opt/devkitpro/portlibs/switch/include/**",
                 "/opt/devkitpro/portlibs/switch/include/freetype2/**",
-                "${workspaceFolder}/Sys-Updater/include/**",
-                "${workspaceFolder}/Sys-Updater/borealis/library/include/**"
+                "${workspaceFolder}/NightFall/include/**",
+                "${workspaceFolder}/NightFall/borealis/library/include/**"
             ],
             "defines": [
                 "SWITCH",
