@@ -282,6 +282,13 @@ int main(int argc, char *argv[])
 	// Run the app
 	while (brls::Application::mainLoop())
 	{
+		if (R_SUCCEEDED(FS::checkFile("/switch/NightFall/config.json")))
+		{
+			brls::Logger::debug("Create Config");
+			std::ofstream out("/switch/NightFall/config.json");
+			out << Conf;
+			out.close();
+		}
 		if (wantExfat->getSelectedValue() != Conf["Exfat"].get<int>())
 		{
 			Conf["Exfat"] = wantExfat->getSelectedValue();
