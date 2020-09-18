@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 	// Create a view
 	brls::TabFrame *rootFrame = new brls::TabFrame();
 	rootFrame->setTitle("NightFall");
-	rootFrame->setIcon(BOREALIS_ASSET("icon/borealis.jpg"));
+	rootFrame->setIcon(BOREALIS_ASSET("icon/NightFall.jpg"));
 
 	// Firmware Tab
 	brls::List *mainlist = new brls::List();

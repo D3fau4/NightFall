@@ -41,6 +41,7 @@ TARGET				:=	$(notdir $(CURDIR))
 APP_TITLE 			:= 	NightFall
 APP_AUTHOR 			:= 	D3fau4
 APP_VERSION 		:= 	1.0.0
+ICON				:=  resources/icon/NightFall.jpg
 BUILD				:=	build
 SOURCES				:=	source source/amssu source/sm source/spl source/hid source/FS source/net source/UI
 DATA				:=	data
