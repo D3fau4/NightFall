@@ -30,7 +30,7 @@ bool rebootdialog = false;
 namespace i18n = brls::i18n;	// for loadTranslations() and getStr()
 using namespace i18n::literals; // for _i18n
 
-InstallUpdate::InstallUpdate(brls::StagedAppletFrame *frame, std::string label)
+InstallUpdate::InstallUpdate(brls::StagedAppletFrame *frame, std::string label, std::string path)
     : frame(frame)
 {
     // Label
@@ -44,6 +44,8 @@ InstallUpdate::InstallUpdate(brls::StagedAppletFrame *frame, std::string label)
     this->label1 = new brls::Label(brls::LabelStyle::DESCRIPTION, label);
     this->label1->setHorizontalAlign(NVG_ALIGN_CENTER);
     this->label1->setParent(this);
+    brls::Logger::debug(path);
+    Install.m_path = path;
     /* Prevent the home button from being pressed during installation. */
     hiddbgDeactivateHomeButton();
 }

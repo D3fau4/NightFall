@@ -33,7 +33,7 @@ private:
     int progressValue = 0;
 
 public:
-    InstallUpdate(brls::StagedAppletFrame *frame, std::string label);
+    InstallUpdate(brls::StagedAppletFrame *frame, std::string label, std::string path = "/switch/NightFall/temp/");
     ~InstallUpdate();
 
     void draw(NVGcontext *vg, int x, int y, unsigned width, unsigned height, brls::Style *style, brls::FrameContext *ctx) override;

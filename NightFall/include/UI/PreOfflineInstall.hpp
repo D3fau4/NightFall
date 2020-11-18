@@ -19,27 +19,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 #pragma once
-#include <iostream>
-#include <string>
-#include <cstring>
-#include <vector>
-#include <switch.h>
-#include <filesystem>
-#include "json.hpp"
 
-using namespace std;
-using json = nlohmann::json;
+#include <borealis.hpp>
 
-extern FsFileSystem *fs;
-extern FsFileSystem devices[4];
+class PreOfflineInstallPage : public brls::View
+{
+  private:
+    brls::Button* button;
+    brls::Label* label;
 
-namespace FS {
-    Result createdir(string path);
-    bool checkdirexist(string path);
-    Result DeleteDir(string path);
-    Result createFile(string path);
-    Result checkFile(string path);
-    Result DeleteFile(string path);
-    Result writeConfig();
-    std::vector<std::string> getDirectories(const std::string &s);
+  public:
+    PreOfflineInstallPage(brls::StagedAppletFrame* frame, std::string label);
+    ~PreOfflineInstallPage();
+
+    void draw(NVGcontext* vg, int x, int y, unsigned width, unsigned height, brls::Style* style, brls::FrameContext* ctx) override;
+    void layout(NVGcontext* vg, brls::Style* style, brls::FontStash* stash) override;
+    brls::View* getDefaultFocus() override;
 };

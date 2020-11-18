@@ -44,6 +44,8 @@ using namespace i18n::literals; // for _i18n
 bool onlineupdate = false;
 bool is_patched = false;
 bool HasEmummc = false;
+std::string fwstring = "";
+brls::SelectListItem *selectfirmoff;
 Result Init_Services(void)
 {
 	Result ret = 0;
@@ -72,7 +74,7 @@ Result Init_Services(void)
 	{
 		return 1;
 	}
-	if (R_FAILED(ret =psmInitialize()))
+	if (R_FAILED(ret = psmInitialize()))
 	{
 		return 1;
 	}
@@ -104,6 +106,8 @@ void InitFolders()
 		brls::Logger::debug("se ha creado la carpeta");
 	deletetemp();
 	if (R_SUCCEEDED(FS::createdir("/switch/NightFall/temp/")))
+		brls::Logger::debug("se ha creado la carpeta");
+	if (R_SUCCEEDED(FS::createdir("/switch/NightFall/Firmwares/")))
 		brls::Logger::debug("se ha creado la carpeta");
 }
 
@@ -239,7 +243,8 @@ int main(int argc, char *argv[])
 		else
 		{
 			// añadir pantalla de "sistema actualizado"
-			if (psm::GetBatteryState() <= 15 && onlineupdate == false){
+			if (psm::GetBatteryState() <= 15 && onlineupdate == false)
+			{
 				stagedFrame->addStage(new UpToDate(stagedFrame, "main/tabs/Firmware/update/update_lowbattery"_i18n.c_str()));
 			}
 			if (is_patched == false)
@@ -253,20 +258,30 @@ int main(int argc, char *argv[])
 		}
 		brls::Application::pushView(stagedFrame);
 	});
-	/*brls::ListItem *UpdateOfflineItem = new brls::ListItem("System Update Offline");
-	UpdateOfflineItem->getClickEvent()->subscribe([](brls::View *view) {
-		//download
-		brls::StagedAppletFrame *stagedFrame1 = new brls::StagedAppletFrame();
-		stagedFrame1->setTitle("System Updater");
-		if (onlineupdate == true)
-		{
-			stagedFrame1->addStage(new InstallUpdate(stagedFrame1));
-			//meme.m_Download = true;
-		}
-		brls::Application::pushView(stagedFrame1);
-	});*/
+
 	mainlist->addView(UpdateOnlineItem);
-	//mainlist->addView(UpdateOfflineItem);
+
+	std::vector<std::string> FirmwareOfflist = FS::getDirectories("/switch/NightFall/Firmwares/");
+	if (!FirmwareOfflist.empty())
+	{
+		// list firmwares
+		selectfirmoff = new brls::SelectListItem(
+			"main/tabs/Firmware/update/update_select"_i18n.c_str(),
+			FirmwareOfflist, 0);
+
+		brls::ListItem *UpdateOfflineItem = new brls::ListItem("main/tabs/Firmware/update/title_offline"_i18n.c_str());
+		UpdateOfflineItem->getClickEvent()->subscribe([](brls::View *view) {
+			// algo
+			brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
+			stagedFrame->setTitle("main/tabs/Firmware/update/title_offline"_i18n.c_str());
+			stagedFrame->addStage(new PreOfflineInstallPage(stagedFrame,"main/tabs/Firmware/update/update_install"_i18n.c_str()));
+			stagedFrame->addStage(new InstallUpdate(stagedFrame,fwstring,"/switch/NightFall/Firmwares/" + fwstring + "/"));
+			brls::Application::pushView(stagedFrame);
+		});
+
+		mainlist->addView(UpdateOfflineItem);
+		mainlist->addView(selectfirmoff);
+	}
 
 	// Settings Tab
 	brls::List *Settingslist = new brls::List();
@@ -311,6 +326,8 @@ int main(int argc, char *argv[])
 	// Run the app
 	while (brls::Application::mainLoop())
 	{
+		if (!FirmwareOfflist.empty())
+			fwstring = FirmwareOfflist[selectfirmoff->getSelectedValue()];
 		if (R_SUCCEEDED(FS::checkFile("/switch/NightFall/config.json")))
 		{
 			brls::Logger::debug("Create Config");
