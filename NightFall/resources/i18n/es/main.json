@@ -12,7 +12,8 @@
                 "update_required": "Actualización pendiente",
                 "update_download": "Descargar actualización",
                 "update_uptodate": "Estás en la última versión del sistema.",
-                "update_mariko": "Lo siento por motivos de seguridad no permito actualizar con consolas parcheadas sin Emummc."
+                "update_mariko": "Lo siento por motivos de seguridad no permito actualizar con consolas parcheadas sin Emummc.",
+                "update_lowbattery": "Batería baja por favor carga tu consola antes de proceder con la actualización."
             }
         },
         "Settings": {

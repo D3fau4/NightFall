@@ -31,6 +31,7 @@ SOFTWARE.*/
 #include "FS/FS.hpp"
 #include "sm/sm.hpp"
 #include "spl/spl.hpp"
+#include "psm/psm.hpp"
 #include "amssu/amssu.h"
 #include "thread.hpp"
 
@@ -71,6 +72,10 @@ Result Init_Services(void)
 	{
 		return 1;
 	}
+	if (R_FAILED(ret =psmInitialize()))
+	{
+		return 1;
+	}
 	return ret;
 }
 
@@ -83,6 +88,7 @@ void close_Services()
 	smExit();
 	hiddbgExit();
 	nifmExit();
+	psmExit();
 }
 
 void deletetemp()
@@ -201,7 +207,7 @@ int main(int argc, char *argv[])
 		if (j["Firmwver"].get<std::string>() == ver.display_version)
 		{
 			std::snprintf(firmwarever, sizeof(firmwarever), "%s: %s", "main/tabs/Firmware/update/current_fw"_i18n.c_str(), ver.display_version);
-			onlineupdate = true;
+			onlineupdate = false;
 		}
 		else
 		{
@@ -220,7 +226,7 @@ int main(int argc, char *argv[])
 		//download
 		brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
 		stagedFrame->setTitle("main/tabs/Firmware/update/title"_i18n.c_str());
-		if (onlineupdate == true && is_patched == false && HasEmummc == true)
+		if (onlineupdate == true && is_patched == false && HasEmummc == true && psm::GetBatteryState() > 15)
 		{
 			Network::Net net = Network::Net();
 			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();
@@ -233,6 +239,9 @@ int main(int argc, char *argv[])
 		else
 		{
 			// añadir pantalla de "sistema actualizado"
+			if (psm::GetBatteryState() <= 15 && onlineupdate == false){
+				stagedFrame->addStage(new UpToDate(stagedFrame, "main/tabs/Firmware/update/update_lowbattery"_i18n.c_str()));
+			}
 			if (is_patched == false)
 			{
 				stagedFrame->addStage(new UpToDate(stagedFrame, "main/tabs/Firmware/update/update_uptodate"_i18n.c_str()));

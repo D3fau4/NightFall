@@ -12,7 +12,8 @@
                 "update_required": "Update required",
                 "update_download": "Download Update",
                 "update_uptodate": "You are up to date.",
-                "update_mariko": "Sorry i dont support patched units :("
+                "update_mariko": "Sorry i dont support patched units :(",
+                "update_lowbattery": "Low battery, please charge your console before proceeding with the update."
             }
         },
         "Settings": {
