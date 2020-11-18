@@ -999,6 +999,16 @@ void Application::setMaximumFPS(unsigned fps)
     Logger::info("Maximum FPS set to {} - using a frame time of {:.2f} ms", fps, Application::frameTime);
 }
 
+void Application::setQuitOnPopRoot(bool enabled)
+{
+    Application::quitOnPopRoot = enabled;
+}
+
+void Application::setGlobalQuit(bool enabled)
+{
+    Application::globalQuit = enabled;
+}
+
 std::string Application::getTitle()
 {
     return Application::title;
