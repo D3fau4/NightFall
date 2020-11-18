@@ -119,10 +119,13 @@ namespace BackGround
                             this->m_DownloadProgress = this->m_DownloadProgress + 1;
                     }
                 }
+                o.close();
                 this->m_Download = false;
             }
             if (this->m_InstallUpdate == true)
             {
+                std::ifstream o("/switch/NightFall/config.json");
+                o >> config;
                 if (m_UpdateState == UpdateState::NeedsValidate)
                 {
                     brls::Logger::debug(this->m_path.c_str());

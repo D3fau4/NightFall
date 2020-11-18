@@ -26,6 +26,12 @@
                 "yes": "Si",
                 "no": "No"
             },
+            "delete_options":{
+                "title":"Borrar la carpeta",
+                "subtitle":"¿Quieres borrar la carpeta después de instalar el firmware?",
+                "yes": "Si",
+                "no": "No"
+            },
             "change_url": {
                 "title": "Servidor",
                 "subtitle": "Cambiar la URL"

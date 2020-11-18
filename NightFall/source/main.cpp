@@ -291,6 +291,11 @@ int main(int argc, char *argv[])
 		{"main/tabs/Settings/exfat_options/no"_i18n.c_str(), "main/tabs/Settings/exfat_options/yes"_i18n.c_str()}, 0, "main/tabs/Settings/exfat_options/subtitle"_i18n.c_str());
 	wantExfat->setSelectedValue(Conf["Exfat"].get<int>());
 
+	brls::SelectListItem *DeletePostInstall = new brls::SelectListItem(
+		"main/tabs/Settings/delete_options/title"_i18n.c_str(),
+		{"main/tabs/Settings/delete_options/no"_i18n.c_str(), "main/tabs/Settings/delete_options/yes"_i18n.c_str()}, 0, "main/tabs/Settings/delete_options/subtitle"_i18n.c_str());
+	DeletePostInstall->setSelectedValue(Conf["DeleteFolder"].get<int>());
+
 	brls::ListItem *Serverurl = new brls::ListItem("main/tabs/Settings/change_url/title"_i18n.c_str(), "main/tabs/Settings/change_url/subtitle"_i18n.c_str());
 	Serverurl->getClickEvent()->subscribe([](brls::View *view) {
 		SwkbdConfig kbd;
@@ -315,6 +320,7 @@ int main(int argc, char *argv[])
 
 	Settingslist->addView(Serverurl);
 	Settingslist->addView(wantExfat);
+	Settingslist->addView(DeletePostInstall);
 	// add in the root MemeItem the tabs
 	rootFrame->addTab("main/tabs/Firmware/title"_i18n.c_str(), mainlist);
 	rootFrame->addSeparator();
@@ -338,6 +344,13 @@ int main(int argc, char *argv[])
 		if (wantExfat->getSelectedValue() != Conf["Exfat"].get<int>())
 		{
 			Conf["Exfat"] = wantExfat->getSelectedValue();
+			std::ofstream out("/switch/NightFall/config.json");
+			out << Conf;
+			out.close();
+		}
+		if (DeletePostInstall->getSelectedValue() != Conf["DeleteFolder"].get<int>())
+		{
+			Conf["DeleteFolder"] = DeletePostInstall->getSelectedValue();
 			std::ofstream out("/switch/NightFall/config.json");
 			out << Conf;
 			out.close();

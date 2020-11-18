@@ -26,6 +26,12 @@
                 "yes": "Yes",
                 "no": "No"
             },
+            "delete_options":{
+                "title":"",
+                "subtitle":"Do you want delete the folder after installing it?",
+                "yes": "Yes",
+                "no": "No"
+            },
             "change_url": {
                 "title": "Server",
                 "subtitle": "Change the URL"
