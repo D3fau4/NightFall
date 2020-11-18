@@ -2,3 +2,4 @@
 #include "PreInstallUpdate.hpp"
 #include "InstallUpdate.hpp"
 #include "UpToDate.hpp"
+#include "PreOfflineInstall.hpp"

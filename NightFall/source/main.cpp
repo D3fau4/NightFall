@@ -274,6 +274,7 @@ int main(int argc, char *argv[])
 			// algo
 			brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
 			stagedFrame->setTitle("main/tabs/Firmware/update/title_offline"_i18n.c_str());
+			stagedFrame->addStage(new PreOfflineInstallPage(stagedFrame,"main/tabs/Firmware/update/update_install"_i18n.c_str()));
 			stagedFrame->addStage(new InstallUpdate(stagedFrame,fwstring,"/switch/NightFall/Firmwares/" + fwstring + "/"));
 			brls::Application::pushView(stagedFrame);
 		});

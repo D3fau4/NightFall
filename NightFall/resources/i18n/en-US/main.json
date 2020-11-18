@@ -12,6 +12,7 @@
                 "current_fw": "Current system version:",
                 "update_select": "Select Firmware:",
                 "update_required": "Update required",
+                "update_install": "Install Update",
                 "update_download": "Download Update",
                 "update_uptodate": "You are up to date.",
                 "update_mariko": "Sorry i dont support patched units :(",
