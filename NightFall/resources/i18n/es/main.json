@@ -1,0 +1,31 @@
+{
+    "crash": {
+        "service_start": "No se pudieron iniciar todos los servicios",
+        "service_TX": "El programa solo se puede ejecutar en atmosphere."
+    },
+    "tabs": {
+        "Firmware": {
+            "title": "Firmware",
+            "update": {
+                "title": "Actualización de la consola",
+                "current_fw": "Versión actual:",
+                "update_required": "Actualización pendiente",
+                "update_download": "Descargar actualización",
+                "update_uptodate": "Estás en la última versión del sistema.",
+                "update_mariko": "Lo siento por motivos de seguridad no permito actualizar con consolas parcheadas sin Emummc."
+            }
+        },
+        "Settings": {
+            "title": "Ajustes",
+            "exfat_options": {
+                "subtitle": "¿Quieres instalar actualizaciones con soporte exfat?",
+                "yes": "Si",
+                "no": "No"
+            },
+            "change_url": {
+                "title": "Servidor",
+                "subtitle": "Cambiar la URL"
+            }
+        }
+    }
+}

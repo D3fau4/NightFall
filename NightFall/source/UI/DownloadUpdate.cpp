@@ -27,6 +27,8 @@ SOFTWARE.*/
 #include "Types.hpp"
 #include "net/net.hpp"
 
+namespace i18n = brls::i18n;	// for loadTranslations() and getStr()
+using namespace i18n::literals; // for _i18n
 json jso1n;
 BackGround::BackgroundTasks Download;
 bool nextframe = false;
@@ -36,13 +38,14 @@ DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
     : frame(frame)
 {
     // Label
+    i18n::loadTranslations();
     std::ifstream i("/switch/NightFall/temp.json");
     i >> jso1n;
     brls::Application::setGlobalQuit(false);
     this->progressDisp = new brls::ProgressDisplay();
     this->progressDisp->setProgress(Download.m_DownloadProgress, jso1n["fw_info"]["files"].get<int>());
     this->progressDisp->setParent(this);
-    this->label = new brls::Label(brls::LabelStyle::DIALOG, "Downloading Update data...", true);
+    this->label = new brls::Label(brls::LabelStyle::DIALOG, "DownloadUpdate/downloading"_i18n.c_str(), true);
     this->label->setHorizontalAlign(NVG_ALIGN_CENTER);
     this->label->setParent(this);
     this->label1 = new brls::Label(brls::LabelStyle::DESCRIPTION, "Firmware: " + jso1n["fw_info"]["version"].get<std::string>());
@@ -57,7 +60,7 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
     if (Download.m_DownloadProgress == jso1n["fw_info"]["files"].get<int>())
     {
         Download.m_Download = false;
-        brls::Dialog *dialog = new brls::Dialog("Warning: do you want to proceed?");
+        brls::Dialog *dialog = new brls::Dialog("DownloadUpdate/start_update"_i18n.c_str());
         brls::GenericEvent::Callback ContinueCallback = [dialog](brls::View *view) {
             dialog->close();
             nextframe = true;
@@ -74,8 +77,8 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
         {
             this->frame->previousStage();
         }
-        dialog->addButton("Continue", ContinueCallback);
-        dialog->addButton("Cancel", cancelCallback);
+        dialog->addButton("DownloadUpdate/button/continue"_i18n.c_str(), ContinueCallback);
+        dialog->addButton("DownloadUpdate/button/cancel"_i18n.c_str(), cancelCallback);
         dialog->setCancelable(false);
         if (showdialog != true)
         {

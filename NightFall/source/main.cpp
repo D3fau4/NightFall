@@ -37,6 +37,9 @@ SOFTWARE.*/
 using json = nlohmann::json;
 json j;
 json Conf;
+namespace i18n = brls::i18n;	// for loadTranslations() and getStr()
+using namespace i18n::literals; // for _i18n
+
 bool onlineupdate = false;
 bool is_patched = false;
 bool HasEmummc = false;
@@ -126,6 +129,7 @@ int main(int argc, char *argv[])
 	// Init the app
 	InitFolders();
 	// init
+	i18n::loadTranslations();
 	BackGround::BackgroundTasks meme;
 	Network::Net net = Network::Net();
 
@@ -154,13 +158,13 @@ int main(int argc, char *argv[])
 	/* Initialize Services */
 	if (R_FAILED(Init_Services()))
 	{
-		brls::Application::crash("The services cant start");
-		return EXIT_FAILURE;
+		brls::Application::crash("main/crash/service_start"_i18n);
+		//return EXIT_FAILURE;
 	}
 	/* Check if is atmosphere */
 	if (sm::isRunning("rnx") || sm::isRunning("tx"))
 	{
-		brls::Logger::error("The software was closed because only works in atmosphere");
+		brls::Logger::error("main/crash/service_TX"_i18n);
 		return EXIT_FAILURE;
 	}
 	// Check some shit
@@ -196,51 +200,51 @@ int main(int argc, char *argv[])
 	{
 		if (j["Firmwver"].get<std::string>() == ver.display_version)
 		{
-			std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
-			onlineupdate = false;
+			std::snprintf(firmwarever, sizeof(firmwarever), "%s: %s", "main/tabs/Firmware/update/current_fw"_i18n.c_str(), ver.display_version);
+			onlineupdate = true;
 		}
 		else
 		{
-			std::snprintf(firmwarever, sizeof(firmwarever), "Update required");
+			std::snprintf(firmwarever, sizeof(firmwarever), "main/tabs/Firmware/update/update_required"_i18n.c_str());
 			onlineupdate = true;
 		}
 	}
 	else
 	{
-		std::snprintf(firmwarever, sizeof(firmwarever), "Current system version: %s", ver.display_version);
+		std::snprintf(firmwarever, sizeof(firmwarever), "%s: %s", "main/tabs/update/Firmware/current_fw"_i18n.c_str(), ver.display_version);
 		onlineupdate = false;
 	}
 
-	brls::ListItem *UpdateOnlineItem = new brls::ListItem("System Update", firmwarever);
+	brls::ListItem *UpdateOnlineItem = new brls::ListItem("main/tabs/Firmware/update/title"_i18n.c_str(), firmwarever);
 	UpdateOnlineItem->getClickEvent()->subscribe([](brls::View *view) {
 		//download
 		brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
-		stagedFrame->setTitle("System Update");
+		stagedFrame->setTitle("main/tabs/Firmware/update/title"_i18n.c_str());
 		if (onlineupdate == true && is_patched == false && HasEmummc == true)
 		{
 			Network::Net net = Network::Net();
 			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();
 			brls::Logger::debug(download);
 			net.Download(download, "/switch/NightFall/temp.json");
-			stagedFrame->addStage(new PreInstallUpdatePage(stagedFrame, "Download Update"));
+			stagedFrame->addStage(new PreInstallUpdatePage(stagedFrame, "main/tabs/Firmware/update/update_download"_i18n.c_str()));
 			stagedFrame->addStage(new DownloadUpdatePage(stagedFrame));
-			stagedFrame->addStage(new InstallUpdate(stagedFrame));
+			stagedFrame->addStage(new InstallUpdate(stagedFrame, j["Firmwver"].get<std::string>().c_str()));
 		}
 		else
 		{
 			// añadir pantalla de "sistema actualizado"
 			if (is_patched == false)
 			{
-				stagedFrame->addStage(new UpToDate(stagedFrame, "You are up to date."));
+				stagedFrame->addStage(new UpToDate(stagedFrame, "main/tabs/Firmware/update/update_uptodate"_i18n.c_str()));
 			}
 			else
 			{
-				stagedFrame->addStage(new UpToDate(stagedFrame, "Sorry i dont support patched units :("));
+				stagedFrame->addStage(new UpToDate(stagedFrame, "main/tabs/Firmware/update/update_mariko"_i18n.c_str()));
 			}
 		}
 		brls::Application::pushView(stagedFrame);
 	});
-	brls::ListItem *UpdateOfflineItem = new brls::ListItem("System Update Offline");
+	/*brls::ListItem *UpdateOfflineItem = new brls::ListItem("System Update Offline");
 	UpdateOfflineItem->getClickEvent()->subscribe([](brls::View *view) {
 		//download
 		brls::StagedAppletFrame *stagedFrame1 = new brls::StagedAppletFrame();
@@ -251,7 +255,7 @@ int main(int argc, char *argv[])
 			//meme.m_Download = true;
 		}
 		brls::Application::pushView(stagedFrame1);
-	});
+	});*/
 	mainlist->addView(UpdateOnlineItem);
 	//mainlist->addView(UpdateOfflineItem);
 
@@ -260,10 +264,10 @@ int main(int argc, char *argv[])
 
 	brls::SelectListItem *wantExfat = new brls::SelectListItem(
 		"Exfat",
-		{"No", "Yes"}, 0, "Do you want exfat updates?");
+		{"main/tabs/Settings/exfat_options/no"_i18n.c_str(), "main/tabs/Settings/exfat_options/yes"_i18n.c_str()}, 0, "main/tabs/Settings/exfat_options/subtitle"_i18n.c_str());
 	wantExfat->setSelectedValue(Conf["Exfat"].get<int>());
 
-	brls::ListItem *Serverurl = new brls::ListItem("Server", "Change the URL");
+	brls::ListItem *Serverurl = new brls::ListItem("main/tabs/Settings/change_url/title"_i18n.c_str(), "main/tabs/Settings/change_url/subtitle"_i18n.c_str());
 	Serverurl->getClickEvent()->subscribe([](brls::View *view) {
 		SwkbdConfig kbd;
 		char tmpoutstr[50] = {0};
@@ -288,9 +292,9 @@ int main(int argc, char *argv[])
 	Settingslist->addView(Serverurl);
 	Settingslist->addView(wantExfat);
 	// add in the root MemeItem the tabs
-	rootFrame->addTab("Firmware", mainlist);
+	rootFrame->addTab("main/tabs/Firmware/title"_i18n.c_str(), mainlist);
 	rootFrame->addSeparator();
-	rootFrame->addTab("Settings", Settingslist);
+	rootFrame->addTab("main/tabs/Settings/title"_i18n.c_str(), Settingslist);
 
 	// Add the root view to the stack
 	brls::Application::pushView(rootFrame);

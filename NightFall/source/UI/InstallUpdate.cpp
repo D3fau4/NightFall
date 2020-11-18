@@ -26,7 +26,11 @@ SOFTWARE.*/
 BackGround::BackgroundTasks Install;
 json v2;
 bool rebootdialog = false;
-InstallUpdate::InstallUpdate(brls::StagedAppletFrame *frame)
+
+namespace i18n = brls::i18n;	// for loadTranslations() and getStr()
+using namespace i18n::literals; // for _i18n
+
+InstallUpdate::InstallUpdate(brls::StagedAppletFrame *frame, std::string label)
     : frame(frame)
 {
     // Label
@@ -34,11 +38,10 @@ InstallUpdate::InstallUpdate(brls::StagedAppletFrame *frame)
     this->progressDisp = new brls::ProgressDisplay();
     this->progressDisp->setProgress(0, 100);
     this->progressDisp->setParent(this);
-    this->label = new brls::Label(brls::LabelStyle::DIALOG, "Prepare Update data...", true);
+    this->label = new brls::Label(brls::LabelStyle::DIALOG, "InstallUpdate/prepare_update"_i18n.c_str(), true);
     this->label->setHorizontalAlign(NVG_ALIGN_CENTER);
     this->label->setParent(this);
-    std::string version_str = std::to_string((Install.m_update_info.version >> 26) & 0x1F) + "." + std::to_string((Install.m_update_info.version >> 20) & 0x1F) + "." + std::to_string((Install.m_update_info.version >> 16) & 0xF);
-    this->label1 = new brls::Label(brls::LabelStyle::DESCRIPTION, version_str);
+    this->label1 = new brls::Label(brls::LabelStyle::DESCRIPTION, label);
     this->label1->setHorizontalAlign(NVG_ALIGN_CENTER);
     this->label1->setParent(this);
     /* Prevent the home button from being pressed during installation. */
@@ -57,7 +60,7 @@ void InstallUpdate::draw(NVGcontext *vg, int x, int y, unsigned width, unsigned 
     if (Install.m_InstallProgress == 5)
     {
         Install.m_InstallUpdate = false;
-        brls::Dialog *dialog = new brls::Dialog("the system will reboot in 3 seconds");
+        brls::Dialog *dialog = new brls::Dialog("InstallUpdate/reboot_dialog"_i18n.c_str());
         if (rebootdialog != true){
             rebootdialog = true;
             dialog->open();

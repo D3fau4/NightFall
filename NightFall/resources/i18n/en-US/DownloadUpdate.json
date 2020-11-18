@@ -1,0 +1,8 @@
+{
+    "downloading": "Downloading Update data...",
+    "start_update": "Warning: do you want to proceed?",
+    "button": {
+        "continue": "Continue",
+        "cancel": "Cancel"
+    }
+}

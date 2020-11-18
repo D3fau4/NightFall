@@ -1,0 +1,31 @@
+{
+    "crash": {
+        "service_start": "The services cant start",
+        "service_TX": "The software was closed because only works in atmosphere"
+    },
+    "tabs": {
+        "Firmware": {
+            "title": "Firmware",
+            "update": {
+                "title": "System Update",
+                "current_fw": "Current system version:",
+                "update_required": "Update required",
+                "update_download": "Download Update",
+                "update_uptodate": "You are up to date.",
+                "update_mariko": "Sorry i dont support patched units :("
+            }
+        },
+        "Settings": {
+            "title": "Settings",
+            "exfat_options": {
+                "subtitle": "Do you want exfat updates?",
+                "yes": "Yes",
+                "no": "No"
+            },
+            "change_url": {
+                "title": "Server",
+                "subtitle": "Change the URL"
+            }
+        }
+    }
+}

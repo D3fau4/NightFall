@@ -22,6 +22,8 @@ SOFTWARE.*/
 #include "UI/PreInstallUpdate.hpp"
 
 #include <math.h>
+namespace i18n = brls::i18n;	// for loadTranslations() and getStr()
+using namespace i18n::literals; // for _i18n
 
 PreInstallUpdatePage::PreInstallUpdatePage(brls::StagedAppletFrame *frame, std::string label)
 {
@@ -37,7 +39,7 @@ PreInstallUpdatePage::PreInstallUpdatePage(brls::StagedAppletFrame *frame, std::
             //DownloadUpdatePage::meme();
         }
     });
-    this->label = new brls::Label(brls::LabelStyle::DIALOG, "Start Download?", true);
+    this->label = new brls::Label(brls::LabelStyle::DIALOG, "PreInstallUpdate/start"_i18n.c_str(), true);
     this->label->setHorizontalAlign(NVG_ALIGN_CENTER);
     this->label->setParent(this);
 }
