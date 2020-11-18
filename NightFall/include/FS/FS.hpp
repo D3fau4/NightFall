@@ -41,4 +41,5 @@ namespace FS {
     Result checkFile(string path);
     Result DeleteFile(string path);
     Result writeConfig();
+    std::vector<std::string> getDirectories(const std::string &s);
 };

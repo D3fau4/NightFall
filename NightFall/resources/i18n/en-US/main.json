@@ -8,7 +8,9 @@
             "title": "Firmware",
             "update": {
                 "title": "System Update",
+                "title_offline": "System Update Offline",
                 "current_fw": "Current system version:",
+                "update_select": "Select Firmware:",
                 "update_required": "Update required",
                 "update_download": "Download Update",
                 "update_uptodate": "You are up to date.",

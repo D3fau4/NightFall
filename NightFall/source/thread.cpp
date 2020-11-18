@@ -125,7 +125,8 @@ namespace BackGround
             {
                 if (m_UpdateState == UpdateState::NeedsValidate)
                 {
-                    if (R_FAILED(amssuValidateUpdate(&m_validateinfo, "/switch/NightFall/temp/")))
+                    brls::Logger::debug(this->m_path.c_str());
+                    if (R_FAILED(amssuValidateUpdate(&m_validateinfo, this->m_path.c_str())))
                     {
                         brls::Application::crash("No se pudo validar");
                     }
@@ -143,7 +144,7 @@ namespace BackGround
                         brls::Logger::debug("Update Exfat");
                     else
                         brls::Logger::debug("Update No Exfat");
-                    if (R_FAILED(amssuSetupUpdate(nullptr, UpdateTaskBufferSize, "/switch/NightFall/temp/", WantExfat)))
+                    if (R_FAILED(amssuSetupUpdate(nullptr, UpdateTaskBufferSize, this->m_path.c_str(), WantExfat)))
                     {
                         brls::Application::crash("Fallo al hacer el setup");
                         //return EXIT_FAILURE;

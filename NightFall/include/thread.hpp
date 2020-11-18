@@ -38,6 +38,7 @@ namespace BackGround
     bool m_InstallUpdate = false;
     int m_DownloadProgress = 0;
     int m_InstallProgress = 0;
+    std::string m_path;
 
     AmsSuUpdateInformation m_update_info;
 

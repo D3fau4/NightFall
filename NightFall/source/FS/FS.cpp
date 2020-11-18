@@ -102,4 +102,13 @@ namespace FS
 		return 0;
 	}
 
+	std::vector<std::string> getDirectories(const std::string &s)
+	{
+		std::vector<std::string> r;
+		for (auto &p : std::filesystem::recursive_directory_iterator(s))
+			if (p.is_directory())
+				r.push_back(p.path().filename());
+		return r;
+	}
+
 } // namespace FS

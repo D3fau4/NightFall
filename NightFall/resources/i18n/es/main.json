@@ -8,7 +8,9 @@
             "title": "Firmware",
             "update": {
                 "title": "Actualización de la consola",
+                "title_offline":"Actualización de la consola offline",
                 "current_fw": "Versión actual:",
+                "update_select": "Selecciona un firmware:",
                 "update_required": "Actualización pendiente",
                 "update_download": "Descargar actualización",
                 "update_uptodate": "Estás en la última versión del sistema.",
