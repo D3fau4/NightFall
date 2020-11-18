@@ -39,6 +39,7 @@ json j;
 json Conf;
 bool onlineupdate = false;
 bool is_patched = false;
+bool HasEmummc = false;
 Result Init_Services(void)
 {
 	Result ret = 0;
@@ -97,6 +98,29 @@ void InitFolders()
 		brls::Logger::debug("se ha creado la carpeta");
 }
 
+void CheckHardware()
+{
+	/*Check if is Ipatched/Mariko */
+	if (spl::GetHardwareType() == "Mariko" || spl::HasRCMbug())
+	{
+		brls::Logger::error("The software was closed because only works in non-patched/mariko");
+		is_patched = true;
+	}
+	else
+	{
+		brls::Logger::debug("Erista non patched");
+	}
+	if (spl::HasEmummc())
+	{
+		brls::Logger::debug("Have Emummc");
+		HasEmummc = true;
+	}
+	else
+	{
+		brls::Logger::debug("Doesnt have Emummc");
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	// Init the app
@@ -139,16 +163,8 @@ int main(int argc, char *argv[])
 		brls::Logger::error("The software was closed because only works in atmosphere");
 		return EXIT_FAILURE;
 	}
-	/*Check if is Ipatched/Mariko */
-	if (spl::GetHardwareType() == "Mariko" || spl::HasRCMbug())
-	{
-		brls::Logger::error("The software was closed because only works in non-patched/mariko");
-		is_patched = true;
-	}
-	else
-	{
-		brls::Logger::debug("Erista non patched");
-	}
+	// Check some shit
+	CheckHardware();
 
 	// get server info
 	if (net.HasInternet() == true)
@@ -200,7 +216,7 @@ int main(int argc, char *argv[])
 		//download
 		brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
 		stagedFrame->setTitle("System Update");
-		if (onlineupdate == true && is_patched == false)
+		if (onlineupdate == true && is_patched == false && HasEmummc == true)
 		{
 			Network::Net net = Network::Net();
 			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();

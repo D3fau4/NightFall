@@ -23,4 +23,5 @@ SOFTWARE.*/
 namespace spl {
     char *GetHardwareType(void);
     bool HasRCMbug(void);
+    bool HasEmummc(void);
 }

@@ -26,6 +26,7 @@ SOFTWARE.*/
 namespace spl
 {
     static constexpr u32 ExosphereHasRcmBugPatch = 65004;
+    static constexpr u32 ExosphereEmummcType = 65007;
     char *GetHardwareType(void)
     {
         Result ret = 0;
@@ -45,6 +46,7 @@ namespace spl
 
             return hardware[hardware_type];
     }
+
     bool HasRCMbug(void)
     {
         Result ret = 0;
@@ -52,6 +54,17 @@ namespace spl
         if (R_SUCCEEDED(ret = splGetConfig(static_cast<SplConfigItem>(ExosphereHasRcmBugPatch), &has_rcm_bug_patch)))
         {
             return has_rcm_bug_patch;
+        }
+    }
+
+    bool HasEmummc(void)
+    {
+        Result ret = 0;
+        u64 IsEmummc;
+
+        if (R_SUCCEEDED(ret = splGetConfig(static_cast<SplConfigItem>(ExosphereEmummcType), &IsEmummc)))
+        {
+            return IsEmummc;
         }
     }
 } // namespace spl
