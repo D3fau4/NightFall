@@ -8,8 +8,8 @@
             "title": "Firmware",
             "update": {
                 "title": "Actualización de la consola",
-                "title_offline":"Actualización de la consola offline",
-                "current_fw": "Versión actual:",
+                "title_offline": "Empezar actualización de la consola offline",
+                "current_fw": "Versión actual",
                 "update_select": "Selecciona un firmware:",
                 "update_required": "Actualización pendiente",
                 "update_install": "Instalar actualización",
@@ -26,9 +26,9 @@
                 "yes": "Si",
                 "no": "No"
             },
-            "delete_options":{
-                "title":"Borrar la carpeta",
-                "subtitle":"¿Quieres borrar la carpeta después de instalar el firmware?",
+            "delete_options": {
+                "title": "Borrar datos instalados",
+                "subtitle": "¿Quieres borrar la carpeta después de instalar el firmware?",
                 "yes": "Si",
                 "no": "No"
             },

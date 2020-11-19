@@ -25,6 +25,7 @@ SOFTWARE.*/
 #include <string>
 #include <iostream>
 #include "net/net.hpp"
+#include "FS/FS.hpp"
 
 /* Var */
 json V1;
@@ -216,6 +217,8 @@ namespace BackGround
                 }
                 if (m_UpdateState == UpdateState::AwaitingReboot)
                 {
+                    if (config["Exfat"].get<int>() == 1)
+                        FS::DeleteDir(this->m_path.c_str());
                     brls::Logger::debug("Preparado: Reinicio en 3s");
                     std::this_thread::sleep_for(3s);
                     bpcInitialize();

@@ -8,8 +8,8 @@
             "title": "Firmware",
             "update": {
                 "title": "System Update",
-                "title_offline": "System Update Offline",
-                "current_fw": "Current system version:",
+                "title_offline": "Start System Update Offline",
+                "current_fw": "Current system version",
                 "update_select": "Select Firmware:",
                 "update_required": "Update required",
                 "update_install": "Install Update",
@@ -26,9 +26,9 @@
                 "yes": "Yes",
                 "no": "No"
             },
-            "delete_options":{
-                "title":"",
-                "subtitle":"Do you want delete the folder after installing it?",
+            "delete_options": {
+                "title": "Delete Folder",
+                "subtitle": "Do you want delete the folder after installing it?",
                 "yes": "Yes",
                 "no": "No"
             },

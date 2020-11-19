@@ -718,8 +718,11 @@ void Application::giveFocus(View* view)
 
 void Application::popView(ViewAnimation animation, std::function<void(void)> cb)
 {
-    if (Application::viewStack.size() <= 1) // never pop the root view
+    if (Application::viewStack.size() <= 1){
+        if (Application::quitOnPopRoot)
+            Application::quit();
         return;
+    }   
 
     Application::blockInputs();
 
@@ -790,7 +793,8 @@ void Application::pushView(View* view, ViewAnimation animation)
     bool fadeOut = last && !last->isTranslucent() && !view->isTranslucent(); // play the fade out animation?
     bool wait    = animation == ViewAnimation::FADE; // wait for the old view animation to be done before showing the new one?
 
-    view->registerAction("brls/hints/exit"_i18n, Key::PLUS, [] { Application::quit(); return true; });
+    if (Application::globalQuit)
+        view->registerAction("brls/hints/exit"_i18n, Key::PLUS, [] { Application::quit(); return true; });
     view->registerAction(
         "FPS", Key::MINUS, [] { Application::toggleFramerateDisplay(); return true; }, true);
 
