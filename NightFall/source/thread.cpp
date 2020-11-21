@@ -125,6 +125,8 @@ namespace BackGround
             }
             if (this->m_InstallUpdate == true)
             {
+                /* Prevent the home button from being pressed during installation. */
+                hiddbgDeactivateHomeButton();
                 std::ifstream o("/switch/NightFall/config.json");
                 o >> config;
                 if (m_UpdateState == UpdateState::NeedsValidate)
@@ -217,7 +219,7 @@ namespace BackGround
                 }
                 if (m_UpdateState == UpdateState::AwaitingReboot)
                 {
-                    if (config["Exfat"].get<int>() == 1)
+                    if (config["DeleteFolder"].get<int>() == 1)
                         FS::DeleteDir(this->m_path.c_str());
                     brls::Logger::debug("Preparado: Reinicio en 3s");
                     std::this_thread::sleep_for(3s);

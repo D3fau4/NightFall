@@ -46,8 +46,6 @@ InstallUpdate::InstallUpdate(brls::StagedAppletFrame *frame, std::string label, 
     this->label1->setParent(this);
     brls::Logger::debug(path);
     Install.m_path = path;
-    /* Prevent the home button from being pressed during installation. */
-    hiddbgDeactivateHomeButton();
 }
 
 InstallUpdate::~InstallUpdate()

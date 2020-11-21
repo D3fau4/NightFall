@@ -18,6 +18,42 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\amssu\amssu.c" />
+    <ClCompile Include="source\FS\FS.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\net\net.cpp" />
+    <ClCompile Include="source\psm\psm.cpp" />
+    <ClCompile Include="source\sm\sm.cpp" />
+    <ClCompile Include="source\spl\spl.cpp" />
+    <ClCompile Include="source\thread.cpp" />
+    <ClCompile Include="source\UI\DownloadUpdate.cpp" />
+    <ClCompile Include="source\UI\InstallUpdate.cpp" />
+    <ClCompile Include="source\UI\PreInstallUpdate.cpp" />
+    <ClCompile Include="source\UI\PreOfflineInstall.cpp" />
+    <ClCompile Include="source\UI\UpToDate.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\amssu\amssu.h" />
+    <ClInclude Include="include\FS\FS.hpp" />
+    <ClInclude Include="include\json.hpp" />
+    <ClInclude Include="include\net\net.hpp" />
+    <ClInclude Include="include\psm\psm.hpp" />
+    <ClInclude Include="include\service_guard.h" />
+    <ClInclude Include="include\sm\sm.hpp" />
+    <ClInclude Include="include\spl\spl.hpp" />
+    <ClInclude Include="include\thread.hpp" />
+    <ClInclude Include="include\Types.hpp" />
+    <ClInclude Include="include\UI\DownloadUpdate.hpp" />
+    <ClInclude Include="include\UI\InstallUpdate.hpp" />
+    <ClInclude Include="include\UI\PreInstallUpdate.hpp" />
+    <ClInclude Include="include\UI\PreOfflineInstall.hpp" />
+    <ClInclude Include="include\UI\UI.hpp" />
+    <ClInclude Include="include\UI\UpToDate.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{A8B2FDD7-257D-44E6-B723-14EB7BDEAA73}</ProjectGuid>
@@ -96,26 +132,6 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <None Include="Makefile" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\amssu\amssu.c" />
-    <ClCompile Include="source\FS\FS.cpp" />
-    <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\net\net.cpp" />
-    <ClCompile Include="source\sm\sm.cpp" />
-    <ClCompile Include="source\spl\spl.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\amssu\amssu.hpp" />
-    <ClInclude Include="include\FS\FS.hpp" />
-    <ClInclude Include="include\net\net.hpp" />
-    <ClInclude Include="include\service_guard.h" />
-    <ClInclude Include="include\sm\sm.hpp" />
-    <ClInclude Include="include\spl\spl.hpp" />
-    <ClInclude Include="include\Types.hpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

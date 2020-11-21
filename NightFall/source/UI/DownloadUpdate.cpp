@@ -51,8 +51,6 @@ DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
     this->label1 = new brls::Label(brls::LabelStyle::DESCRIPTION, "Firmware: " + jso1n["fw_info"]["version"].get<std::string>());
     this->label1->setHorizontalAlign(NVG_ALIGN_CENTER);
     this->label1->setParent(this);
-    /* Prevent the home button from being pressed during installation. */
-    hiddbgDeactivateHomeButton();
 }
 
 void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsigned height, brls::Style *style, brls::FrameContext *ctx)
