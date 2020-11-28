@@ -1,0 +1,8 @@
+{
+    "downloading": "アップデートをダウンロード中...",
+    "start_update": "警告：続行しますか?",
+    "button": {
+        "continue": "続ける",
+        "cancel": "キャンセル"
+    }
+}
