@@ -1,0 +1,41 @@
+{
+    "crash": {
+        "service_start": "サービスを開始できません",
+        "service_TX": "atmosphereでのみ動作するため、ソフトウェアは閉じられました"
+    },
+    "tabs": {
+        "Firmware": {
+            "title": "ファームウェア",
+            "update": {
+                "title": "システムアップデート",
+                "title_offline": "システムアップデートをオフラインで開始",
+                "current_fw": "現在のシステムバージョン",
+                "update_select": "ファームウェアの選択:",
+                "update_required": "アップデートしてください",
+                "update_install": "更新プログラムをインストールします",
+                "update_download": "アップデートをダウンロード",
+                "update_uptodate": "最新です。",
+                "update_mariko": "申し訳ありませんが、パッチを適用したユニットはサポートしていません :(",
+                "update_lowbattery": "バッテリー残量が少ないため、アップデートを続行する前に本体を充電してください。"
+            }
+        },
+        "Settings": {
+            "title": "設定",
+            "exfat_options": {
+                "subtitle": "exfatの更新が必要ですか?",
+                "yes": "はい",
+                "no": "いいえ"
+            },
+            "delete_options": {
+                "title": "フォルダを削除",
+                "subtitle": "インストール後にフォルダを削除しますか?",
+                "yes": "はい",
+                "no": "いいえ"
+            },
+            "change_url": {
+                "title": "サーバー",
+                "subtitle": "URLを変更"
+            }
+        }
+    }
+}
