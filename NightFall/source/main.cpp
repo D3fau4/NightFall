@@ -46,6 +46,7 @@ bool is_patched = false;
 bool HasEmummc = false;
 std::string fwstring = "";
 brls::SelectListItem *selectfirmoff;
+
 Result Init_Services(void)
 {
 	Result ret = 0;
@@ -111,6 +112,32 @@ void InitFolders()
 		brls::Logger::debug("se ha creado la carpeta");
 }
 
+void WriteConfig()
+{
+	brls::Logger::debug("Create Config");
+	std::ifstream o("romfs:/config.json");
+	o >> Conf;
+	o.close();
+}
+
+void CheckJson()
+{
+	if (Conf["DeleteFolder"].is_null())
+	{
+		brls::Logger::debug("OLD JSON");
+		Conf.clear();
+		FS::DeleteFile("/switch/NightFall/config.json");
+		WriteConfig();
+	}
+	if (Conf["Exfat"].is_null())
+	{
+		brls::Logger::debug("OLD JSON");
+		Conf.clear();
+		FS::DeleteFile("/switch/NightFall/config.json");
+		WriteConfig();
+	}
+}
+
 void CheckHardware()
 {
 	/*Check if is Ipatched/Mariko */
@@ -153,16 +180,14 @@ int main(int argc, char *argv[])
 	// get config
 	if (R_SUCCEEDED(FS::checkFile("/switch/NightFall/config.json")))
 	{
-		brls::Logger::debug("Create Config");
-		std::ifstream o("romfs:/config.json");
-		o >> Conf;
-		o.close();
+		WriteConfig();
 	}
 	else
 	{
 		std::ifstream o("/switch/NightFall/config.json");
 		o >> Conf;
 		o.close();
+		CheckJson();
 	}
 
 	/* Initialize Services */
@@ -274,8 +299,8 @@ int main(int argc, char *argv[])
 			// algo
 			brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
 			stagedFrame->setTitle("main/tabs/Firmware/update/title_offline"_i18n.c_str());
-			stagedFrame->addStage(new PreOfflineInstallPage(stagedFrame,"main/tabs/Firmware/update/update_install"_i18n.c_str()));
-			stagedFrame->addStage(new InstallUpdate(stagedFrame,fwstring,"/switch/NightFall/Firmwares/" + fwstring + "/"));
+			stagedFrame->addStage(new PreOfflineInstallPage(stagedFrame, "main/tabs/Firmware/update/update_install"_i18n.c_str()));
+			stagedFrame->addStage(new InstallUpdate(stagedFrame, fwstring, "/switch/NightFall/Firmwares/" + fwstring + "/"));
 			brls::Application::pushView(stagedFrame);
 		});
 
