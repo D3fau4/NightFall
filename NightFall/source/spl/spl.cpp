@@ -32,10 +32,11 @@ namespace spl
         Result ret = 0;
         u64 hardware_type = 4;
         char *hardware[] = {
-            "Icosa",
-            "Copper",
-            "Hoag",
-            "Mariko",
+            "Icosa",  // Erista normal
+            "Copper", // Erista prototype
+            "Hoag",   // Mariko lite
+            "Iowa",   // Mariko retail
+            "Calcio", // Mariko prototype
             "Unknown"};
 
         if (R_FAILED(ret = splGetConfig(SplConfigItem_HardwareType, &hardware_type)))
@@ -43,15 +44,18 @@ namespace spl
             return hardware[4];
         }
         else
-
             return hardware[hardware_type];
     }
 
-    bool HasRCMbug(void)
+    bool HasRCMbugPatched(void)
     {
         Result ret = 0;
         u64 has_rcm_bug_patch;
         if (R_SUCCEEDED(ret = splGetConfig(static_cast<SplConfigItem>(ExosphereHasRcmBugPatch), &has_rcm_bug_patch)))
+        {
+            return has_rcm_bug_patch;
+        }
+        else
         {
             return has_rcm_bug_patch;
         }
@@ -63,6 +67,10 @@ namespace spl
         u64 IsEmummc;
 
         if (R_SUCCEEDED(ret = splGetConfig(static_cast<SplConfigItem>(ExosphereEmummcType), &IsEmummc)))
+        {
+            return IsEmummc;
+        }
+        else
         {
             return IsEmummc;
         }

@@ -141,9 +141,9 @@ void CheckJson()
 void CheckHardware()
 {
 	/*Check if is Ipatched/Mariko */
-	if (spl::GetHardwareType() == "Mariko" || spl::HasRCMbug())
+	if (spl::GetHardwareType() == "Iowa" || spl::GetHardwareType() == "Hoag" || spl::GetHardwareType() == "Calcio" || spl::HasRCMbugPatched())
 	{
-		brls::Logger::error("The software was closed because only works in non-patched/mariko");
+		brls::Logger::error("Mariko or patched unit detected");
 		is_patched = true;
 	}
 	else
@@ -154,6 +154,7 @@ void CheckHardware()
 	{
 		brls::Logger::debug("Have Emummc");
 		HasEmummc = true;
+		is_patched = false;
 	}
 	else
 	{
@@ -250,12 +251,15 @@ int main(int argc, char *argv[])
 		onlineupdate = false;
 	}
 
+	brls::Logger::debug(j["Firmwver"].get<std::string>());
+	brls::Logger::debug(ver.display_version);
+
 	brls::ListItem *UpdateOnlineItem = new brls::ListItem("main/tabs/Firmware/update/title"_i18n.c_str(), firmwarever);
 	UpdateOnlineItem->getClickEvent()->subscribe([](brls::View *view) {
 		//download
 		brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
 		stagedFrame->setTitle("main/tabs/Firmware/update/title"_i18n.c_str());
-		if (onlineupdate == true && is_patched == false && HasEmummc == true && psm::GetBatteryState() > 15)
+		if (onlineupdate == true && is_patched == false && psm::GetBatteryState() >= 15)
 		{
 			Network::Net net = Network::Net();
 			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();
@@ -272,7 +276,7 @@ int main(int argc, char *argv[])
 			{
 				stagedFrame->addStage(new UpToDate(stagedFrame, "main/tabs/Firmware/update/update_lowbattery"_i18n.c_str()));
 			}
-			if (is_patched == false)
+			else if (is_patched == false)
 			{
 				stagedFrame->addStage(new UpToDate(stagedFrame, "main/tabs/Firmware/update/update_uptodate"_i18n.c_str()));
 			}
