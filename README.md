@@ -1,6 +1,6 @@
 # NightFall
 
-A simple (online) System Updater for Nintendo Switch made whit [borealis](https://github.com/natinusala/borealis)
+A simple (online) System Updater for Nintendo Switch made whit [borealis](https://github.com/natinusala/borealis) & it only supports [Atmosphère](https://github.com/Atmosphere-NX/Atmosphere) custom firmware
 
 ![main screen](https://cdn.discordapp.com/attachments/519986961382113283/778958406798016532/2020111913060200-DB1426D1DFD034027CECDE9C2DD914B8.jpg)
 
