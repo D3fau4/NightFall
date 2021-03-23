@@ -25,8 +25,10 @@ SOFTWARE.*/
 
 namespace spl
 {
+
     static constexpr u32 ExosphereHasRcmBugPatch = 65004;
     static constexpr u32 ExosphereEmummcType = 65007;
+    
     char *GetHardwareType(void)
     {
         Result ret = 0;
@@ -37,6 +39,7 @@ namespace spl
             "Hoag",   // Mariko lite
             "Iowa",   // Mariko retail
             "Calcio", // Mariko prototype
+            "Aula",   // nx-abcd board
             "Unknown"};
 
         if (R_FAILED(ret = splGetConfig(SplConfigItem_HardwareType, &hardware_type)))
@@ -75,4 +78,5 @@ namespace spl
             return IsEmummc;
         }
     }
+
 } // namespace spl
