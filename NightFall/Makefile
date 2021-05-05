@@ -48,7 +48,7 @@ DATA				:=	data
 INCLUDES			:=	include
 ROMFS				:=	resources
 BOREALIS_PATH		:=	borealis
-BOREALIS_RESOURCES	:=	romfs:/
+BOREALIS_RESOURCES	:=	romfs:\x2F
 
 #---------------------------------------------------------------------------------
 # options for code generation
