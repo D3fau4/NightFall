@@ -73,6 +73,7 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
         }
         if (prevframe == true)
         {
+            Download.m_Download = false;
             this->frame->previousStage();
         }
         dialog->addButton("DownloadUpdate/button/continue"_i18n.c_str(), ContinueCallback);

@@ -82,8 +82,10 @@ namespace Network
         {
             res = CURLE_HTTP_RETURNED_ERROR;
         }
-        if (res != CURLE_OK)
+        if (res != CURLE_OK) {
+            brls::Logger::error("Fallo al descargar: " + url);
             remove(filepath.c_str());
+        }
         return res == CURLE_OK ? false : true;
     }
 

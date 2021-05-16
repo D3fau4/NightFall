@@ -23,6 +23,7 @@ SOFTWARE.*/
 #include <sys/select.h>
 #include <curl/curl.h>
 #include <switch.h>
+#include <borealis.hpp>
 
 using namespace std;
 namespace Network

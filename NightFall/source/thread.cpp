@@ -76,48 +76,48 @@ namespace BackGround
                         std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Program"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
-                        if (net.Download(download, out) == true)
+                        bool res;
+                        do
                         {
-                            printf("error");
-                        }
-                        else
-                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                            res = net.Download(download, out);
+                        } while (res == true);
+                        this->m_DownloadProgress = this->m_DownloadProgress + 1;
                     }
                     else if (V1["programid"][v7[i]].contains("Data") == true)
                     {
                         std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Data"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
-                        if (net.Download(download, out) == true)
+                        bool res;
+                        do
                         {
-                            printf("error");
-                        }
-                        else
-                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                            res = net.Download(download, out);
+                        } while (res == true);
+                        this->m_DownloadProgress = this->m_DownloadProgress + 1;
                     }
                     else if (V1["programid"][v7[i]].contains("PublicData") == true)
                     {
                         std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["PublicData"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
-                        if (net.Download(download, out) == true)
+                        bool res;
+                        do
                         {
-                            printf("error");
-                        }
-                        else
-                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                            res = net.Download(download, out);
+                        } while (res == true);
+                        this->m_DownloadProgress = this->m_DownloadProgress + 1;
                     }
                     if (V1["programid"][v7[i]].contains("Meta") == true)
                     {
                         std::string download = config["URL"].get<std::string>() + "c/a/" + V1["programid"][v7[i]]["Meta"].get<std::string>();
                         brls::Logger::debug(download);
                         std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
-                        if (net.Download(download, out) == true)
+                        bool res;
+                        do
                         {
-                            printf("error");
-                        }
-                        else
-                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                            res = net.Download(download, out);
+                        } while (res == true);
+                        this->m_DownloadProgress = this->m_DownloadProgress + 1;
                     }
                 }
                 o.close();
