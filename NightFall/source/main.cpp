@@ -32,6 +32,7 @@ SOFTWARE.*/
 #include "sm/sm.hpp"
 #include "spl/spl.hpp"
 #include "psm/psm.hpp"
+#include "setsys/setsys.hpp"
 #include "amssu/amssu.h"
 #include "thread.hpp"
 
@@ -225,18 +226,12 @@ int main(int argc, char *argv[])
 	// Firmware Tab
 	brls::List *mainlist = new brls::List();
 
-	Result ret = 0;
-	SetSysFirmwareVersion ver;
-	if (R_FAILED(ret = setsysGetFirmwareVersion(&ver)))
-	{
-		return NULL;
-	}
 	char firmwarever[0x43];
 	if (j["Firmwver"].empty() == false)
 	{
-		if (j["Firmwver"].get<std::string>() == ver.display_version)
+		if (j["Firmwver"].get<std::string>() == setsys::GetFirmwareVersion())
 		{
-			std::snprintf(firmwarever, sizeof(firmwarever), "%s: %s", "main/tabs/Firmware/update/current_fw"_i18n.c_str(), ver.display_version);
+			std::snprintf(firmwarever, sizeof(firmwarever), "%s: %s", "main/tabs/Firmware/update/current_fw"_i18n.c_str(), setsys::GetFirmwareVersion().c_str());
 			onlineupdate = false;
 		}
 		else
@@ -247,12 +242,12 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		std::snprintf(firmwarever, sizeof(firmwarever), "%s: %s", "main/tabs/update/Firmware/current_fw"_i18n.c_str(), ver.display_version);
+		std::snprintf(firmwarever, sizeof(firmwarever), "%s: %s", "main/tabs/update/Firmware/current_fw"_i18n.c_str(), setsys::GetFirmwareVersion().c_str());
 		onlineupdate = false;
 	}
 
 	brls::Logger::debug(j["Firmwver"].get<std::string>());
-	brls::Logger::debug(ver.display_version);
+	brls::Logger::debug(setsys::GetFirmwareVersion());
 
 	brls::ListItem *UpdateOnlineItem = new brls::ListItem("main/tabs/Firmware/update/title"_i18n.c_str(), firmwarever);
 	UpdateOnlineItem->getClickEvent()->subscribe([](brls::View *view) {

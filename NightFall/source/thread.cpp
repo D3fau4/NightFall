@@ -37,6 +37,8 @@ std::string Updatepath;
 UpdateState m_UpdateState = UpdateState::NeedsValidate;
 AmsSuUpdateValidationInfo m_validateinfo;
 
+SetSysSleepSettings set;
+
 namespace BackGround
 {
     BackgroundTasks::BackgroundTasks()
@@ -59,10 +61,15 @@ namespace BackGround
     void BackgroundTasks::DownloadUpdate()
     {
         Network::Net net = Network::Net();
+        set = setsys::GetSleepConfig();
         while (this->m_running)
         {
             if (this->m_Download == true)
             {
+                if (R_FAILED(setsys::SetSleepOff()))
+                {
+                    brls::Logger::error("No se pudo cambiar la configuración del modo sleep");
+                }
                 std::ifstream i("/switch/NightFall/temp.json");
                 i >> V1;
                 std::ifstream o("/switch/NightFall/config.json");
@@ -219,6 +226,10 @@ namespace BackGround
                 }
                 if (m_UpdateState == UpdateState::AwaitingReboot)
                 {
+                    if (R_FAILED(setsys::SetSleepConfig(&set)))
+                    {
+                        brls::Logger::error("No se pudo restaurar la configuración");
+                    }
                     if (config["DeleteFolder"].get<int>() == 1)
                         FS::DeleteDir(this->m_path.c_str());
                     brls::Logger::debug("Preparado: Reinicio en 3s");

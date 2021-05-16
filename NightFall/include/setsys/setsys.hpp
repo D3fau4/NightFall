@@ -19,34 +19,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 #pragma once
-
 #include <switch.h>
-#include <borealis.hpp>
-#include "json.hpp"
-#include "amssu/amssu.h"
-#include "setsys/setsys.hpp"
-#include <thread>
+#include <string>
 
-using json = nlohmann::json;
-
-namespace BackGround
+namespace setsys
 {
-  class BackgroundTasks
-  {
-  public:
-    BackgroundTasks();
-    ~BackgroundTasks();
-    bool m_Download = false;
-    bool m_InstallUpdate = false;
-    int m_DownloadProgress = 0;
-    int m_InstallProgress = 0;
-    std::string m_path;
-
-    AmsSuUpdateInformation m_update_info;
-
-  private:
-    bool m_running = false;
-    void DownloadUpdate();
-    std::thread m_downloadUpdateThread;
-  };
-} // namespace BackGround
+    std::string GetFirmwareVersion();
+    Result SetSleepOff();
+    SetSysSleepSettings GetSleepConfig();
+    Result SetSleepConfig(SetSysSleepSettings *set);
+} // namespace setsys
