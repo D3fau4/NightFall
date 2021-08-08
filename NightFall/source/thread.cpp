@@ -109,7 +109,7 @@ namespace BackGround
 					}
 					else
 						this->m_DownloadProgress++;
-               }
+                }
                 o.close();
                 this->m_Download = false;
             }
