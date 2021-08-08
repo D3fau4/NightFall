@@ -20,6 +20,7 @@ SOFTWARE.*/
 
 #include <switch.h>
 #include "net/net.hpp"
+#include <cstring>
 namespace Network
 {
     static struct curl_slist *hosts = NULL;
@@ -29,6 +30,35 @@ namespace Network
         curl_global_init(CURL_GLOBAL_DEFAULT);
         hosts = curl_slist_append(NULL, "reinx.guide:167.99.228.103");
     }
+	
+	//Write file in mem to increase download speed Applet mode only has 40 ~ 50 MB but is ok 
+	struct MemoryStruct
+	{
+	  char *memory;
+	  size_t size;
+	  int mode;
+	};
+
+	static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, void *userdata)
+	{
+	  size_t realsize = size * nmemb;
+	  struct MemoryStruct *mem = (struct MemoryStruct *)userdata;
+
+	  char *ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
+
+	  if (ptr == NULL)
+	  {
+		  printf("Failed to realloc mem");
+		  return 0;
+	  }
+	 
+	  mem->memory = ptr;
+	  memcpy(&(mem->memory[mem->size]), contents, realsize);
+	  mem->size += realsize;
+	  mem->memory[mem->size] = 0;
+	 
+	  return realsize;
+	}
 
     size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string *data)
     {
@@ -65,17 +95,22 @@ namespace Network
         if (curl)
         {
             fp = fopen(filepath.c_str(), "wb");
+ 			struct MemoryStruct chunk;
+            chunk.memory = (char*)malloc(1);
+            chunk.size = 0;
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
             curl_easy_setopt(curl, CURLOPT_RESOLVE, hosts);
             curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall");
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fwrite);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
             curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
             res = curl_easy_perform(curl);
-            curl_easy_cleanup(curl);
+            fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
+			curl_easy_cleanup(curl);
+			free(chunk.memory);
             fclose(fp);
         }
         else
