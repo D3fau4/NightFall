@@ -88,13 +88,14 @@ namespace Network
 
     bool Net::Download(string url, string filepath)
     {
+		std::string out=filepath+".tmp";
         FILE *fp;
         CURLcode res = CURLE_OK;
         CURL *curl = curl_easy_init();
 
         if (curl)
         {
-            fp = fopen(filepath.c_str(), "wb");
+            fp = fopen(out.c_str(), "wb");
  			struct MemoryStruct chunk;
             chunk.memory = (char*)malloc(1);
             chunk.size = 0;
@@ -118,7 +119,11 @@ namespace Network
             res = CURLE_HTTP_RETURNED_ERROR;
         }
         if (res != CURLE_OK)
-            remove(filepath.c_str());
+            remove(out.c_str());
+		else{
+			rename(out.c_str(),filepath.c_str());
+			remove(out.c_str());
+		}
         return res == CURLE_OK ? false : true;
     }
 
