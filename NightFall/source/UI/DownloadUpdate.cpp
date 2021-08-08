@@ -55,7 +55,7 @@ DownloadUpdatePage::DownloadUpdatePage(brls::StagedAppletFrame *frame)
 
 void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsigned height, brls::Style *style, brls::FrameContext *ctx)
 {
-    if (Download.m_DownloadProgress == jso1n["fw_info"]["files"].get<int>())
+    if (Download.m_DownloadProgress >= jso1n["fw_info"]["files"].get<int>())
     {
         Download.m_Download = false;
         brls::Dialog *dialog = new brls::Dialog("DownloadUpdate/start_update"_i18n.c_str());
