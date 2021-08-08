@@ -21,6 +21,9 @@ SOFTWARE.*/
 #include <switch.h>
 #include "net/net.hpp"
 #include <cstring>
+#include "FS/FS.hpp"
+#include <borealis.hpp>
+
 namespace Network
 {
     static struct curl_slist *hosts = NULL;
@@ -88,6 +91,10 @@ namespace Network
 
     bool Net::Download(string url, string filepath)
     {
+		if (FS::checkFile(filepath)){
+			brls::Logger::debug("file  "+ filepath+" exist download abort");
+			return false;
+		}
 		std::string out=filepath+".tmp";
         FILE *fp;
         CURLcode res = CURLE_OK;
