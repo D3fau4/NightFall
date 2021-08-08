@@ -72,54 +72,40 @@ namespace BackGround
                 int n = v7.size();
                 for (int i = 0; i < n; i++)
                 {
+					std::string download="",out="";
                     if (V1["programid"][v7[i]].contains("Program") == true)
                     {
-                        std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Program"].get<std::string>();
-                        brls::Logger::debug(download);
-                        std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
-                        if (net.Download(download, out) == true)
-                        {
-                            printf("error");
-                        }
-                        else
-                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                        download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Program"].get<std::string>();
+                        out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
                     }
                     else if (V1["programid"][v7[i]].contains("Data") == true)
                     {
-                        std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Data"].get<std::string>();
-                        brls::Logger::debug(download);
-                        std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
-                        if (net.Download(download, out) == true)
-                        {
-                            printf("error");
-                        }
-                        else
-                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                        download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["Data"].get<std::string>();
+                        out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
                     }
                     else if (V1["programid"][v7[i]].contains("PublicData") == true)
                     {
-                        std::string download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["PublicData"].get<std::string>();
-                        brls::Logger::debug(download);
-                        std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
-                        if (net.Download(download, out) == true)
-                        {
-                            printf("error");
-                        }
-                        else
-                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                        download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["PublicData"].get<std::string>();
+                        out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
                     }
                     if (V1["programid"][v7[i]].contains("Meta") == true)
                     {
-                        std::string download = config["URL"].get<std::string>() + "c/a/" + V1["programid"][v7[i]]["Meta"].get<std::string>();
-                        brls::Logger::debug(download);
-                        std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
-                        if (net.Download(download, out) == true)
-                        {
-                            printf("error");
-                        }
-                        else
-                            this->m_DownloadProgress = this->m_DownloadProgress + 1;
+                        download = config["URL"].get<std::string>() + "c/a/" + V1["programid"][v7[i]]["Meta"].get<std::string>();
+                        out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
                     }
+					
+                    brls::Logger::debug(download);
+					if (FS::checkFile(out)){
+						printf("jump: %s\n",out.c_str());
+						this->m_DownloadProgress++;
+					} else if (download.length() > 2){
+						if (net.Download(download, out) == true)
+						{
+							printf("error: %s\n",download.c_str());
+						}
+						else
+							this->m_DownloadProgress++;
+					}
                 }
                 o.close();
                 this->m_Download = false;
