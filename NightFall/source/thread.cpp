@@ -70,6 +70,7 @@ namespace BackGround
                 o >> config;
                 auto v7 = V1["titleids"].get<std::vector<std::string>>();
                 int n = v7.size();
+				this->m_DownloadProgress=0;
                 for (int i = 0; i < n; i++)
                 {
 					std::string download="",out="";
@@ -88,25 +89,27 @@ namespace BackGround
                         download = config["URL"].get<std::string>() + "c/c/" + V1["programid"][v7[i]]["PublicData"].get<std::string>();
                         out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
                     }
+					brls::Logger::debug(download+" "+to_string(this->m_DownloadProgress)+" of "+to_string(V1["fw_info"]["files"].get<int>()));
+					if (net.Download(download, out) == true)
+					{
+						printf("error: %s\n",download.c_str());
+					}
+					else
+						this->m_DownloadProgress++;
+
                     if (V1["programid"][v7[i]].contains("Meta") == true)
                     {
                         download = config["URL"].get<std::string>() + "c/a/" + V1["programid"][v7[i]]["Meta"].get<std::string>();
                         out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
                     }
-					
-                    brls::Logger::debug(download);
-					if (FS::checkFile(out)){
-						printf("jump: %s\n",out.c_str());
-						this->m_DownloadProgress++;
-					} else if (download.length() > 2){
-						if (net.Download(download, out) == true)
-						{
-							printf("error: %s\n",download.c_str());
-						}
-						else
-							this->m_DownloadProgress++;
+					brls::Logger::debug(download);
+					if (net.Download(download, out) == true)
+					{
+						printf("error: %s\n",download.c_str());
 					}
-                }
+					else
+						this->m_DownloadProgress++;
+               }
                 o.close();
                 this->m_Download = false;
             }
@@ -210,7 +213,7 @@ namespace BackGround
                         FS::DeleteDir(this->m_path.c_str());
 					} else if (!V1["fw_info"]["version"].empty()){
 						//move Temp Folder to Firmwares if not exist
-						rename("/switch/NightFall/temp",("/switch/NightFall/Firmwares/NX-"+V1["fw_info"]["version"].get<std::string>()).c_str());
+						rename("/switch/NightFall/temp",("/switch/NightFall/Firmwares/Firmware_"+V1["fw_info"]["version"].get<std::string>()).c_str());
 					}
                     brls::Logger::debug("Preparado: Reinicio en 3s");
                     std::this_thread::sleep_for(3s);
