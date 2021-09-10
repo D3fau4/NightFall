@@ -92,7 +92,7 @@ namespace Network
     bool Net::Download(string url, string filepath)
     {
 		if (FS::checkFile(filepath)){
-			brls::Logger::debug("file  "+ filepath+" exist download abort");
+			brls::Logger::debug("File  "+ filepath+" exist download abort");
 			return false;
 		}
 		std::string out=filepath+".tmp";
