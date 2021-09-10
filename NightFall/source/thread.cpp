@@ -227,7 +227,7 @@ namespace BackGround
 						rename("/switch/NightFall/temp",("/switch/NightFall/Firmwares/Firmware_"+V1["fw_info"]["version"].get<std::string>()).c_str());
 					}
                     brls::Logger::debug("Preparado: Reinicio en 3s");
-                    std::this_thread::sleep_for(6s);
+                    std::this_thread::sleep_for(3s);
                     bpcInitialize();
                     bpcRebootSystem();
                     bpcExit();
