@@ -164,10 +164,17 @@ void CheckHardware()
 
 int main(int argc, char *argv[])
 {
+	// init
+	apmInitialize();
+	appletSetCpuBoostMode(ApmCpuBoostMode_FastLoad);
+	appletSetAutoSleepDisabled(true);
+	appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
+	appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
+
 	// Init the app
 	InitFolders();
-	// init
 	i18n::loadTranslations();
+	
 	BackGround::BackgroundTasks meme;
 	Network::Net net = Network::Net();
 
