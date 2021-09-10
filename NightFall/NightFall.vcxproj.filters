@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{ae171e21-f5c8-4819-9245-8b92d28043bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\FS">
+      <UniqueIdentifier>{e584b161-8b81-42c5-94ca-9ee99e74ddce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\amssu">
+      <UniqueIdentifier>{b817fd9b-3a03-4ad9-8c73-f1f885cbf6fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\net">
+      <UniqueIdentifier>{f59dda34-a694-49f6-99c7-8c04dca12546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\psm">
+      <UniqueIdentifier>{4ef80759-1f7a-43d3-b6ac-cf285a3e9932}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\sm">
+      <UniqueIdentifier>{8e7fb163-bf86-4235-8121-ab51acd210f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\spl">
+      <UniqueIdentifier>{10124dd7-3c7b-407c-a643-ab22eef0c4f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI">
+      <UniqueIdentifier>{92e7e79b-4f1c-4313-9841-5c676ae29724}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{e4a118c4-e2b9-4645-b605-2d7b0cdc99ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\amssu">
+      <UniqueIdentifier>{b668feb1-30cd-44fa-b90c-af5c297032d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\FS">
+      <UniqueIdentifier>{02b83631-d64f-4092-9377-5f4dff343aed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\net">
+      <UniqueIdentifier>{b585ff15-c5cf-49e1-9dae-fbf7da20ed25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\psm">
+      <UniqueIdentifier>{81040a6e-a73b-497a-a1bf-814b6d2e51ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\spl">
+      <UniqueIdentifier>{5516a23d-d6a9-45a4-bee3-6f3c2858e462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\UI">
+      <UniqueIdentifier>{553c2d9d-a7a4-4b5b-9e0e-82be752bbc1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\sm">
+      <UniqueIdentifier>{9eec5207-4753-41b4-9f74-b4ffb4800aff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="source\thread.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="source\FS\FS.cpp">
+      <Filter>src\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="source\amssu\amssu.c">
+      <Filter>src\amssu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\net\net.cpp">
+      <Filter>src\net</Filter>
+    </ClCompile>
+    <ClCompile Include="source\psm\psm.cpp">
+      <Filter>src\psm</Filter>
+    </ClCompile>
+    <ClCompile Include="source\sm\sm.cpp">
+      <Filter>src\sm</Filter>
+    </ClCompile>
+    <ClCompile Include="source\spl\spl.cpp">
+      <Filter>src\spl</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\DownloadUpdate.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\InstallUpdate.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\PreInstallUpdate.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\PreOfflineInstall.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UI\UpToDate.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\json.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\service_guard.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\thread.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\amssu\amssu.h">
+      <Filter>include\amssu</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FS\FS.hpp">
+      <Filter>include\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="include\net\net.hpp">
+      <Filter>include\net</Filter>
+    </ClInclude>
+    <ClInclude Include="include\psm\psm.hpp">
+      <Filter>include\psm</Filter>
+    </ClInclude>
+    <ClInclude Include="include\spl\spl.hpp">
+      <Filter>include\spl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\DownloadUpdate.hpp">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\InstallUpdate.hpp">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\PreInstallUpdate.hpp">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\PreOfflineInstall.hpp">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\UI.hpp">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\UpToDate.hpp">
+      <Filter>include\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sm\sm.hpp">
+      <Filter>include\sm</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
