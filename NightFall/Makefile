@@ -39,8 +39,8 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 TARGET				:=	$(notdir $(CURDIR))
 APP_TITLE 			:= 	NightFall
-APP_AUTHOR 			:= 	D3fau4
-APP_VERSION 		:= 	1.1.2
+APP_AUTHOR 			:= 	D3fau4, Kronos2308 Fork
+APP_VERSION 		:= 	1.1.4
 ICON				:=  resources/icon/NightFall.jpg
 BUILD				:=	build
 SOURCES				:=	source source/amssu source/sm source/spl source/hid source/FS source/net source/psm source/UI
