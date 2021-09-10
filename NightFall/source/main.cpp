@@ -26,7 +26,6 @@ SOFTWARE.*/
 #include <string>
 #include "UI/UI.hpp"
 #include "json.hpp"
-#include "Types.hpp"
 #include "net/net.hpp"
 #include "FS/FS.hpp"
 #include "sm/sm.hpp"

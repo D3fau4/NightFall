@@ -24,7 +24,6 @@ SOFTWARE.*/
 #include <fstream>
 #include <string>
 #include <iostream>
-#include "Types.hpp"
 #include "net/net.hpp"
 
 namespace i18n = brls::i18n;	// for loadTranslations() and getStr()

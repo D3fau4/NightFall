@@ -142,6 +142,9 @@ class Application
     static GenericEvent* getGlobalFocusChangeEvent();
     static VoidEvent* getGlobalHintsUpdateEvent();
 
+    static void setQuitOnPopRoot(bool enabled);
+    static void setGlobalQuit(bool enabled);
+
     static View* getCurrentFocus();
 
     static std::string getTitle();
@@ -187,6 +190,9 @@ class Application
     inline static std::string commonFooter = "";
 
     inline static FramerateCounter* framerateCounter = nullptr;
+
+    inline static bool quitOnPopRoot = false;
+    inline static bool globalQuit = true;
 
     inline static float frameTime = 0.0f;
 
