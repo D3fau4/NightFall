@@ -58,6 +58,8 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
     if (Download.m_DownloadProgress >= jso1n["fw_info"]["files"].get<int>())
     {
         Download.m_Download = false;
+		this->frame->nextStage();
+		/*
         brls::Dialog *dialog = new brls::Dialog("DownloadUpdate/start_update"_i18n.c_str());
         brls::GenericEvent::Callback ContinueCallback = [dialog](brls::View *view) {
             dialog->close();
@@ -83,6 +85,9 @@ void DownloadUpdatePage::draw(NVGcontext *vg, int x, int y, unsigned width, unsi
             showdialog = true;
             dialog->open();
         }
+		
+		
+		*/
     }
     else if (Download.m_Download != true)
     {
