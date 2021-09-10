@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/HamletDuFromage/borealis.git
+	branch = master
+	commit = 5bbadc951734876bc74490302de561c1bb0231ad
+	parent = 4bbd6ffe153942e53161366635999ff4b00cec8f
+	method = merge
+	cmdver = 0.4.3
