@@ -101,6 +101,22 @@ void deletetemp()
 	FS::DeleteFile("/switch/NightFall/temp.json");
 }
 
+void Chain(){
+	//no Sleep
+	appletSetCpuBoostMode(ApmCpuBoostMode_FastLoad);
+	appletSetAutoSleepDisabled(true);
+	appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
+	appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
+}
+
+void UnChain(){
+	//Normal
+	appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
+	appletSetAutoSleepDisabled(false);
+	appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
+	appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);
+}
+
 void InitFolders()
 {
 	if (R_SUCCEEDED(FS::createdir("/switch/NightFall/")))
@@ -166,10 +182,7 @@ int main(int argc, char *argv[])
 {
 	// init
 	apmInitialize();
-	appletSetCpuBoostMode(ApmCpuBoostMode_FastLoad);
-	appletSetAutoSleepDisabled(true);
-	appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
-	appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
+	Chain();
 
 	// Init the app
 	InitFolders();
@@ -268,6 +281,7 @@ int main(int argc, char *argv[])
 		stagedFrame->setTitle("main/tabs/Firmware/update/title"_i18n.c_str());
 		if (onlineupdate == true && is_patched == false && psm::GetBatteryState() >= 15)
 		{
+			Chain();
 			Network::Net net = Network::Net();
 			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();
 			brls::Logger::debug(download);
@@ -364,7 +378,7 @@ int main(int argc, char *argv[])
 
 	// Add the root view to the stack
 	brls::Application::pushView(rootFrame);
-
+	UnChain();
 	// Run the app
 	while (brls::Application::mainLoop())
 	{
