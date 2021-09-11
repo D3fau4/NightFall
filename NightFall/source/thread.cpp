@@ -222,9 +222,12 @@ namespace BackGround
                 {
                     if (config["DeleteFolder"].get<int>() == 1){
                         FS::DeleteDir(this->m_path.c_str());
-					} else if (!V1["fw_info"]["version"].empty()){
-						//move Temp Folder to Firmwares if not exist
-						rename("/switch/NightFall/temp",("/switch/NightFall/Firmwares/Firmware_"+V1["fw_info"]["version"].get<std::string>()).c_str());
+					} else if (this->m_path == "/switch/NightFall/temp"){
+						if (!V1["fw_info"]["version"].empty()){
+							//move Temp Folder to Firmwares if not exist
+							rename("/switch/NightFall/temp",("/switch/NightFall/Firmwares/Firmware_"+V1["fw_info"]["version"].get<std::string>()).c_str());
+						}
+						FS::DeleteDir(this->m_path.c_str());
 					}
                     brls::Logger::debug("Preparado: Reinicio en 3s");
                     std::this_thread::sleep_for(3s);
