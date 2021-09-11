@@ -33,11 +33,14 @@ namespace spl
         Result ret = 0;
 		std::string MDL="Unknown";
 		//Model of switch board
-		s32 modelo;
+		SetSysProductModel modelo;
 		if (R_FAILED(ret = setsysGetProductModel(&modelo))) {
 			printf("setsysGetProductModel() Failied: 0x%x.\n\n", ret);
 		} else {
 			switch(modelo) {
+				case SetSysProductModel_Invalid:
+					MDL="Invalid";// Erista normal
+					break;
 				case SetSysProductModel_Nx:
 					MDL="Icosa";// Erista normal
 					break;
