@@ -20,6 +20,7 @@
 
 #include <borealis/application.hpp>
 #include <borealis/scroll_view.hpp>
+#include <borealis/sidebar.hpp>
 
 namespace brls
 {
@@ -42,6 +43,28 @@ void ScrollView::draw(NVGcontext* vg, int x, int y, unsigned width, unsigned hei
 
     //Disable scissoring
     nvgRestore(vg);
+
+    // Draw scrollbar
+    float contentViewHeight = static_cast<float>(this->contentView->getHeight());
+    float scrollViewHeight = static_cast<float>(this->height - style->List.scrollBarPadding * 2);
+
+    if (contentViewHeight > scrollViewHeight)
+    {
+        float scrollbarHeight = (scrollViewHeight * scrollViewHeight) / contentViewHeight;
+        if (scrollbarHeight < style->List.scrollBarMinimumHeight) scrollbarHeight = style->List.scrollBarMinimumHeight;
+
+        float scrollbarPos = (this->scrollY * contentViewHeight) / (contentViewHeight - scrollViewHeight) * (scrollViewHeight - std::ceil(scrollbarHeight));
+
+        nvgFillColor(vg, RGBA(ctx->theme->scrollBarColor.r, ctx->theme->scrollBarColor.g, ctx->theme->scrollBarColor.b, this->scrollBarAlpha * 0xFF));
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg,
+            this->x + this->width - style->List.scrollBarWidth,
+            this->y + style->List.scrollBarPadding + std::floor(scrollbarPos),
+            style->List.scrollBarWidth,
+            std::floor(scrollbarHeight),
+            style->List.scrollBarRadius);
+        nvgFill(vg);
+    }
 }
 
 unsigned ScrollView::getYCenter(View* view)
@@ -141,8 +164,16 @@ bool ScrollView::updateScrolling(bool animated)
     if (contentHeight == 0)
         return false;
 
-    View* focusedView                  = Application::getCurrentFocus();
-    int currentSelectionMiddleOnScreen = focusedView->getY() + focusedView->getHeight() / 2;
+    // Ensure we're dealing with a focused view with a parent
+    View* focusedView = Application::getCurrentFocus();
+    if (!focusedView || !focusedView->hasParent())
+        return false;
+
+    // We're only going to use focusedView's properties if its parent matches our contentView
+    bool useFocusedView = (focusedView->getParent() == this->contentView);
+
+    // Calculate scroll value
+    int currentSelectionMiddleOnScreen = (useFocusedView ? (focusedView->getY() + focusedView->getHeight() / 2) : this->contentView->getY());
     float newScroll                    = -(this->scrollY * contentHeight) - ((float)currentSelectionMiddleOnScreen - (float)this->middleY);
 
     // Bottom boundary
@@ -167,28 +198,48 @@ void ScrollView::startScrolling(bool animated, float newScroll)
     if (newScroll == this->scrollY)
         return;
 
-    menu_animation_ctx_tag tag = (uintptr_t) & this->scrollY;
-    menu_animation_kill_by_tag(&tag);
+    menu_animation_ctx_tag tag_scroll = (uintptr_t) & this->scrollY;
+    menu_animation_kill_by_tag(&tag_scroll);
+
+    menu_animation_ctx_tag tag_bar = (uintptr_t) & this->scrollBarAlpha;
+    menu_animation_kill_by_tag(&tag_bar);
 
     if (animated)
     {
+        // Get style
         Style* style = Application::getStyle();
 
-        menu_animation_ctx_entry_t entry;
-        entry.cb           = [](void* userdata) {};
-        entry.duration     = style->AnimationDuration.highlight;
-        entry.easing_enum  = EASING_OUT_QUAD;
-        entry.subject      = &this->scrollY;
-        entry.tag          = tag;
-        entry.target_value = newScroll;
-        entry.tick         = [this](void* userdata) { this->scrollAnimationTick(); };
-        entry.userdata     = nullptr;
+        // Animate scrolling
+        menu_animation_ctx_entry_t entry_scroll;
+        entry_scroll.cb           = [](void* userdata) {};
+        entry_scroll.duration     = style->AnimationDuration.highlight;
+        entry_scroll.easing_enum  = EASING_OUT_QUAD;
+        entry_scroll.subject      = &this->scrollY;
+        entry_scroll.tag          = tag_scroll;
+        entry_scroll.target_value = newScroll;
+        entry_scroll.tick         = [this](void* userdata) { this->scrollAnimationTick(); };
+        entry_scroll.userdata     = nullptr;
 
-        menu_animation_push(&entry);
+        menu_animation_push(&entry_scroll);
+
+        // Animate scrollbar
+        this->scrollBarAlpha = Application::getTheme()->scrollBarAlphaFull;
+        menu_animation_ctx_entry_t entry_bar;
+        entry_bar.cb           = nullptr;
+        entry_bar.duration     = 500;
+        entry_bar.easing_enum  = EASING_LINEAR;
+        entry_bar.subject      = &this->scrollBarAlpha;
+        entry_bar.tag          = tag_bar;
+        entry_bar.target_value = Application::getTheme()->scrollBarAlphaNormal;
+        entry_bar.tick         = [](void* userdata) {};
+        entry_bar.userdata     = nullptr;
+
+        menu_animation_push(&entry_bar);
     }
     else
     {
         this->scrollY = newScroll;
+        this->scrollBarAlpha = Application::getTheme()->scrollBarAlphaNormal;
     }
 
     this->invalidate(!animated); // layout immediately if not animated

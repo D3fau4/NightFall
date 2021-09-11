@@ -1,8 +1,8 @@
 dep_glfw3 = dependency('glfw3', version : '>=3.3')
 dep_glm   = dependency('glm', version : '>=0.9.8')
+dep_glad  = dependency('glad', version : '>=0.1.27')
 
 borealis_files = files(
-    'lib/extern/glad/glad.c',
     'lib/extern/nanovg/nanovg.c',
     'lib/extern/fmt/src/format.cc',
     'lib/extern/fmt/src/os.cc',
@@ -58,4 +58,4 @@ borealis_include = include_directories(
     'include/borealis/extern',
 )
 
-borealis_dependencies = [ dep_glfw3, dep_glm ]
+borealis_dependencies = [ dep_glfw3, dep_glm, dep_glad ]

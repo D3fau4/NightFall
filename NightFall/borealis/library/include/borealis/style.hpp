@@ -104,6 +104,11 @@ class Style
         unsigned marginTopBottom;
         unsigned spacing;
 
+        unsigned scrollBarWidth;
+        unsigned scrollBarRadius;
+        unsigned scrollBarPadding;
+        float scrollBarMinimumHeight;
+
         // Item
         struct
         {

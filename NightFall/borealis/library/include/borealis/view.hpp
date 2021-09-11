@@ -61,6 +61,12 @@ enum class ViewBackground
     BACKDROP
 };
 
+enum class ViewType
+{
+  VIEW,
+  SIDEBARITEM,
+};
+
 extern NVGcolor transparent;
 
 class View;
@@ -86,6 +92,7 @@ class View
     void drawHighlight(NVGcontext* vg, Theme* theme, float alpha, Style* style, bool background);
 
     float highlightAlpha = 0.0f;
+    float clickAnimationAlpha = 0.0f;
 
     bool dirty = true;
 
@@ -102,6 +109,8 @@ class View
     bool hidden = false;
 
     std::vector<Action> actions;
+
+    ViewType viewType = ViewType::VIEW;
 
     /**
      * Parent user data, typically the index of the view
@@ -204,11 +213,18 @@ class View
     void updateActionHint(Key key, std::string hintText);
     void setActionAvailable(Key key, bool available);
 
+    virtual void playClickAnimation();
+
     std::string describe() const { return typeid(*this).name(); }
 
     const std::vector<Action>& getActions()
     {
         return this->actions;
+    }
+
+    virtual ViewType getViewType()
+    {
+        return this->viewType;
     }
 
     /**

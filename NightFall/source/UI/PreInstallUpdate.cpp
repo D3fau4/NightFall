@@ -22,7 +22,6 @@ SOFTWARE.*/
 #include "UI/PreInstallUpdate.hpp"
 #include "net/net.hpp"
 
-#include <math.h>
 namespace i18n = brls::i18n;	// for loadTranslations() and getStr()
 using namespace i18n::literals; // for _i18n
 

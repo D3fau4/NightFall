@@ -58,6 +58,12 @@ HorizonLightTheme::HorizonLightTheme()
 
     this->spinnerBarColor = nvgRGBA(131, 131, 131, 102);
 
+    this->scrollBarColor = nvgRGB(138, 138, 138);
+    this->scrollBarAlphaNormal = 0.2f;
+    this->scrollBarAlphaFull = 0.5f;
+
+    this->clickAnimationAlpha = 0.3f;
+
     this->headerRectangleColor = nvgRGB(127, 127, 127);
 
     this->buttonPrimaryEnabledBackgroundColor  = nvgRGB(50, 79, 241);
@@ -111,6 +117,12 @@ HorizonDarkTheme::HorizonDarkTheme()
     this->nextStageBulletColor = nvgRGB(165, 165, 165);
 
     this->spinnerBarColor = nvgRGBA(131, 131, 131, 102); // TODO: get this right
+
+    this->scrollBarColor = nvgRGB(153, 153, 153);
+    this->scrollBarAlphaNormal = 0.2f;
+    this->scrollBarAlphaFull = 0.5f;
+
+    this->clickAnimationAlpha = 0.3f;
 
     this->headerRectangleColor = nvgRGB(160, 160, 160);
 

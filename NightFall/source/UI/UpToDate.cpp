@@ -21,8 +21,6 @@ SOFTWARE.*/
 #include <math.h>
 #include "UI/UpToDate.hpp"
 
-#include <math.h>
-
 UpToDate::UpToDate(brls::StagedAppletFrame* frame, std::string label)
 {
     // Label

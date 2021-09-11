@@ -4,9 +4,9 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/natinusala/borealis.git
+	remote = https://github.com/HamletDuFromage/borealis.git
 	branch = master
-	commit = d5ba2eabc0b61a85075a37c21469e3cde5c6bae6
-	parent = 49fa45ab9b236452e5713e346c0233e7cee56153
+	commit = 5bbadc951734876bc74490302de561c1bb0231ad
+	parent = 4bbd6ffe153942e53161366635999ff4b00cec8f
 	method = merge
-	cmdver = 0.4.2
+	cmdver = 0.4.3

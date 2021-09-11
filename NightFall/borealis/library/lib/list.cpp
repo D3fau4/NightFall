@@ -109,18 +109,25 @@ void ListContentView::customSpacing(View* current, View* next, int* spacing)
 }
 
 ListItem::ListItem(std::string label, std::string description, std::string subLabel)
-    : label(label)
-    , subLabel(subLabel)
 {
     Style* style = Application::getStyle();
 
     this->setHeight(subLabel != "" ? style->List.Item.heightWithSubLabel : style->List.Item.height);
     this->setTextSize(style->Label.listItemFontSize);
 
+    this->labelView = new Label(LabelStyle::LIST_ITEM, label, false);
+    this->labelView->setParent(this);
+
     if (description != "")
     {
         this->descriptionView = new Label(LabelStyle::DESCRIPTION, description, true);
         this->descriptionView->setParent(this);
+    }
+
+    if (subLabel != "")
+    {
+        this->subLabelView = new Label(LabelStyle::DESCRIPTION, subLabel, false);
+        this->subLabelView->setParent(this);
     }
 
     this->registerAction("brls/hints/ok"_i18n, Key::A, [this] { return this->onClick(); });
@@ -199,6 +206,46 @@ GenericEvent* ListItem::getClickEvent()
 
 void ListItem::layout(NVGcontext* vg, Style* style, FontStash* stash)
 {
+    unsigned baseHeight = this->height;
+    bool hasSubLabel    = this->subLabelView && this->subLabelView->getText() != "";
+    bool hasThumbnail   = this->thumbnailView;
+    bool hasValue       = this->valueView && this->valueView->getText() != "";
+
+    if (this->descriptionView)
+        baseHeight -= this->descriptionView->getHeight() + style->List.Item.descriptionSpacing;
+
+    unsigned leftPadding = hasThumbnail ? this->thumbnailView->getWidth() + style->List.Item.thumbnailPadding * 2 : style->List.Item.padding;
+    unsigned rightPadding = (hasSubLabel || !hasValue) ? style->List.Item.padding : this->valueView->getTextWidth() + style->List.Item.padding * 2;
+
+    this->labelView->setBoundaries(x + leftPadding, y + (baseHeight / (hasSubLabel ? 3 : 2)), width - leftPadding - rightPadding, 0);
+    this->labelView->invalidate();
+
+    // Value
+    if (hasValue) {
+        unsigned valueX = x + width - style->List.Item.padding;
+        unsigned valueY = y + (hasSubLabel ? baseHeight - baseHeight / 3 : baseHeight / 2);
+
+        this->valueView->setBoundaries(valueX, valueY, 0, 0);
+        if (hasSubLabel) this->valueView->setVerticalAlign(NVG_ALIGN_TOP);
+        this->valueView->setHorizontalAlign(NVG_ALIGN_RIGHT);
+        this->valueView->invalidate();
+
+        this->oldValueView->setBoundaries(valueX, valueY, 0, 0);
+        if (hasSubLabel) this->oldValueView->setVerticalAlign(NVG_ALIGN_TOP);
+        this->valueView->setHorizontalAlign(NVG_ALIGN_RIGHT);
+        this->oldValueView->invalidate();
+    }
+
+    // Sub Label
+    if (hasSubLabel)
+    {
+        rightPadding = hasValue ? this->valueView->getTextWidth() + style->List.Item.padding * 2 : style->List.Item.padding;
+
+        this->subLabelView->setBoundaries(x + leftPadding, y + baseHeight - baseHeight / 3, width - leftPadding - rightPadding, 0);
+        this->subLabelView->setVerticalAlign(NVG_ALIGN_TOP);
+        this->subLabelView->invalidate();
+    }
+
     // Description
     if (this->descriptionView)
     {
@@ -240,47 +287,38 @@ void ListItem::getHighlightInsets(unsigned* top, unsigned* right, unsigned* bott
         *left = -style->List.Item.indent;
 }
 
-void ListItem::resetValueAnimation()
-{
-    this->valueAnimation = 0.0f;
-
-    menu_animation_ctx_tag tag = (uintptr_t) & this->valueAnimation;
-    menu_animation_kill_by_tag(&tag);
-}
-
 void ListItem::setValue(std::string value, bool faint, bool animate)
 {
-    this->oldValue      = this->value;
     this->oldValueFaint = this->valueFaint;
+    this->valueFaint    = faint;
 
-    this->value      = value;
-    this->valueFaint = faint;
+    if (!this->valueView) {
+        this->valueView = new Label(this->valueFaint ? LabelStyle::LIST_ITEM_VALUE_FAINT : LabelStyle::LIST_ITEM_VALUE, value, false);
+        this->valueView->setParent(this);
 
-    this->resetValueAnimation();
+        this->oldValueView = new Label(this->oldValueFaint ? LabelStyle::LIST_ITEM_VALUE_FAINT : LabelStyle::LIST_ITEM_VALUE, "", false);
+        this->oldValueView->setParent(this);
+    } else {
+        this->oldValueView->setText(this->valueView->getText());
+        this->oldValueView->setStyle(this->oldValueFaint ? LabelStyle::LIST_ITEM_VALUE_FAINT : LabelStyle::LIST_ITEM_VALUE);
 
-    if (animate && this->oldValue != "")
-    {
-        Style* style = Application::getStyle();
+        this->valueView->setText(value);
+        this->valueView->setStyle(this->valueFaint ? LabelStyle::LIST_ITEM_VALUE_FAINT : LabelStyle::LIST_ITEM_VALUE);
 
-        menu_animation_ctx_tag tag = (uintptr_t) & this->valueAnimation;
-        menu_animation_ctx_entry_t entry;
-
-        entry.cb           = [this](void* userdata) { this->resetValueAnimation(); };
-        entry.duration     = style->AnimationDuration.highlight;
-        entry.easing_enum  = EASING_IN_OUT_QUAD;
-        entry.subject      = &this->valueAnimation;
-        entry.tag          = tag;
-        entry.target_value = 1.0f;
-        entry.tick         = [](void* userdata) {};
-        entry.userdata     = nullptr;
-
-        menu_animation_push(&entry);
+        if (animate && this->oldValueView->getText() != "")
+        {
+            this->oldValueView->animate(LabelAnimation::EASE_OUT);
+            this->valueView->animate(LabelAnimation::EASE_IN);
+        } else {
+            this->valueView->resetTextAnimation();
+            this->oldValueView->resetTextAnimation();
+        }
     }
 }
 
 std::string ListItem::getValue()
 {
-    return this->value;
+    return this->valueView ? this->valueView->getText() : "";
 }
 
 void ListItem::setDrawTopSeparator(bool draw)
@@ -299,10 +337,9 @@ View* ListItem::getDefaultFocus()
 void ListItem::draw(NVGcontext* vg, int x, int y, unsigned width, unsigned height, Style* style, FrameContext* ctx)
 {
     unsigned baseHeight = this->height;
-    bool hasSubLabel    = this->subLabel != "";
+    bool hasSubLabel    = this->subLabelView && this->subLabelView->getText() != "";
     bool hasThumbnail   = this->thumbnailView;
-
-    unsigned leftPadding = hasThumbnail ? this->thumbnailView->getWidth() + style->List.Item.thumbnailPadding * 2 : style->List.Item.padding;
+    bool hasValue       = this->valueView && this->valueView->getText() != "";
 
     if (this->indented)
     {
@@ -319,36 +356,14 @@ void ListItem::draw(NVGcontext* vg, int x, int y, unsigned width, unsigned heigh
     }
 
     // Value
-    unsigned valueX = x + width - style->List.Item.padding;
-    unsigned valueY = y + (hasSubLabel ? baseHeight - baseHeight / 3 : baseHeight / 2);
-
-    nvgTextAlign(vg, NVG_ALIGN_RIGHT | (hasSubLabel ? NVG_ALIGN_TOP : NVG_ALIGN_MIDDLE));
-    nvgFontFaceId(vg, ctx->fontStash->regular);
-    if (this->valueAnimation != 0.0f)
-    {
-        //Old value
-        NVGcolor valueColor = a(this->oldValueFaint ? ctx->theme->listItemFaintValueColor : ctx->theme->listItemValueColor);
-        valueColor.a *= (1.0f - this->valueAnimation);
-        nvgFillColor(vg, valueColor);
-        nvgFontSize(vg, style->List.Item.valueSize * (1.0f - this->valueAnimation));
-        nvgBeginPath(vg);
-        nvgText(vg, valueX, valueY, this->oldValue.c_str(), nullptr);
-
-        //New value
-        valueColor = a(this->valueFaint ? ctx->theme->listItemFaintValueColor : ctx->theme->listItemValueColor);
-        valueColor.a *= this->valueAnimation;
-        nvgFillColor(vg, valueColor);
-        nvgFontSize(vg, style->List.Item.valueSize * this->valueAnimation);
-        nvgBeginPath(vg);
-        nvgText(vg, valueX, valueY, this->value.c_str(), nullptr);
-    }
-    else
-    {
-        nvgFillColor(vg, a(this->valueFaint ? ctx->theme->listItemFaintValueColor : ctx->theme->listItemValueColor));
-        nvgFontSize(vg, style->List.Item.valueSize);
-        nvgFontFaceId(vg, ctx->fontStash->regular);
-        nvgBeginPath(vg);
-        nvgText(vg, valueX, valueY, this->value.c_str(), nullptr);
+    if (hasValue) {
+        if (this->valueView->getTextAnimation() != 1.0f)
+        {
+            this->valueView->frame(ctx);
+            this->oldValueView->frame(ctx);
+        } else {
+            this->valueView->frame(ctx);
+        }
     }
 
     // Checked marker
@@ -394,23 +409,11 @@ void ListItem::draw(NVGcontext* vg, int x, int y, unsigned width, unsigned heigh
     }
 
     // Label
-    nvgFillColor(vg, a(ctx->theme->textColor));
-    nvgFontSize(vg, this->textSize);
-    nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-    nvgFontFaceId(vg, ctx->fontStash->regular);
-    nvgBeginPath(vg);
-    nvgText(vg, x + leftPadding, y + baseHeight / (hasSubLabel ? 3 : 2), this->label.c_str(), nullptr);
+    this->labelView->frame(ctx);
 
     // Sub Label
     if (hasSubLabel)
-    {
-        nvgFillColor(vg, a(ctx->theme->descriptionColor));
-        nvgFontSize(vg, style->Label.descriptionFontSize);
-        nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgFontFaceId(vg, ctx->fontStash->regular);
-        nvgBeginPath(vg);
-        nvgText(vg, x + leftPadding, y + baseHeight - baseHeight / 3, this->subLabel.c_str(), nullptr);
-    }
+        this->subLabelView->frame(ctx);
 
     // Thumbnail
     if (hasThumbnail)
@@ -439,25 +442,52 @@ bool ListItem::hasDescription()
     return this->descriptionView;
 }
 
-std::string ListItem::getLabel()
-{
-    return this->label;
-}
-
 void ListItem::setLabel(std::string label)
 {
-    this->label = label;
+    this->labelView->setText(label);
+}
+
+std::string ListItem::getLabel()
+{
+    return this->labelView->getText();
+}
+
+void ListItem::setSubLabel(std::string subLabel)
+{
+    if (!this->subLabelView) {
+        this->subLabelView = new Label(LabelStyle::DESCRIPTION, subLabel, false);
+        this->subLabelView->setParent(this);
+    } else {
+        this->subLabelView->setText(subLabel);
+    }
+
+    Style* style = Application::getStyle();
+    this->setHeight(subLabel != "" ? style->List.Item.heightWithSubLabel : style->List.Item.height);
+}
+
+std::string ListItem::getSubLabel()
+{
+    return this->subLabelView ? this->subLabelView->getText() : "";
 }
 
 ListItem::~ListItem()
 {
+    delete this->labelView;
+
+    if (this->valueView)
+        delete this->valueView;
+
+    if (this->oldValueView)
+        delete this->oldValueView;
+
     if (this->descriptionView)
         delete this->descriptionView;
 
+    if (this->subLabelView)
+        delete this->subLabelView;
+
     if (this->thumbnailView)
         delete this->thumbnailView;
-
-    this->resetValueAnimation();
 }
 
 ToggleListItem::ToggleListItem(std::string label, bool initialValue, std::string description, std::string onValue, std::string offValue)
@@ -491,10 +521,11 @@ bool ToggleListItem::getToggleState()
     return this->toggleState;
 }
 
-InputListItem::InputListItem(std::string label, std::string initialValue, std::string helpText, std::string description, int maxInputLength)
+InputListItem::InputListItem(std::string label, std::string initialValue, std::string helpText, std::string description, int maxInputLength, int kbdDisableBitmask)
     : ListItem(label, description)
     , helpText(helpText)
     , maxInputLength(maxInputLength)
+    , kbdDisableBitmask(kbdDisableBitmask)
 {
     this->setValue(initialValue, false);
 }
@@ -504,14 +535,14 @@ bool InputListItem::onClick()
     Swkbd::openForText([&](std::string text) {
         this->setValue(text, false);
     },
-        this->helpText, "", this->maxInputLength, this->getValue());
+        this->helpText, "", this->maxInputLength, this->getValue(), this->kbdDisableBitmask);
 
     ListItem::onClick();
     return true;
 }
 
-IntegerInputListItem::IntegerInputListItem(std::string label, int initialValue, std::string helpText, std::string description, int maxInputLength)
-    : InputListItem(label, std::to_string(initialValue), helpText, description, maxInputLength)
+IntegerInputListItem::IntegerInputListItem(std::string label, int initialValue, std::string helpText, std::string description, int maxInputLength, int kbdDisableBitmask)
+    : InputListItem(label, std::to_string(initialValue), helpText, description, maxInputLength, kbdDisableBitmask)
 {
 }
 
@@ -520,7 +551,7 @@ bool IntegerInputListItem::onClick()
     Swkbd::openForNumber([&](int number) {
         this->setValue(std::to_string(number), false);
     },
-        this->helpText, "", this->maxInputLength, this->getValue());
+        this->helpText, "", this->maxInputLength, this->getValue(), "", "", this->kbdDisableBitmask);
 
     ListItem::onClick();
     return true;

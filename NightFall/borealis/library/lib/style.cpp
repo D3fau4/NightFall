@@ -85,6 +85,11 @@ HorizonStyle::HorizonStyle()
         .marginTopBottom = 42,
         .spacing         = 61,
 
+        .scrollBarWidth         = 4,
+        .scrollBarRadius        = 2,
+        .scrollBarPadding       = 3,
+        .scrollBarMinimumHeight = 10.0f,
+
         .Item = {
             .height             = 69, // offset by 1 to have the highlight hide the separator
             .heightWithSubLabel = 99,

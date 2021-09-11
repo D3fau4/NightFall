@@ -24,6 +24,7 @@
 #include <borealis/label.hpp>
 #include <borealis/rectangle.hpp>
 #include <borealis/scroll_view.hpp>
+#include <borealis/swkbd.hpp>
 #include <string>
 
 namespace brls
@@ -34,14 +35,7 @@ namespace brls
 class ListItem : public View
 {
   protected:
-    std::string label;
-    std::string subLabel;
-    std::string value;
-    bool valueFaint;
-
-    std::string oldValue;
-    bool oldValueFaint;
-    float valueAnimation = 0.0f;
+    bool valueFaint = false, oldValueFaint = false;
 
     bool checked = false; // check mark on the right
 
@@ -49,7 +43,11 @@ class ListItem : public View
 
     bool drawTopSeparator = true;
 
+    Label* labelView       = nullptr;
     Label* descriptionView = nullptr;
+    Label* subLabelView    = nullptr;
+    Label* valueView       = nullptr;
+    Label* oldValueView    = nullptr;
     Image* thumbnailView   = nullptr;
 
     bool reduceDescriptionSpacing = false;
@@ -57,8 +55,6 @@ class ListItem : public View
     GenericEvent clickEvent;
 
     bool indented = false;
-
-    void resetValueAnimation();
 
   public:
     ListItem(std::string label, std::string description = "", std::string subLabel = "");
@@ -87,6 +83,9 @@ class ListItem : public View
 
     void setLabel(std::string label);
     std::string getLabel();
+
+    void setSubLabel(std::string subLabel);
+    std::string getSubLabel();
 
     /**
      * Sets the value of this list item
@@ -162,9 +161,10 @@ class InputListItem : public ListItem
   protected:
     std::string helpText;
     int maxInputLength;
+    int kbdDisableBitmask;
 
   public:
-    InputListItem(std::string label, std::string initialValue, std::string helpText, std::string description = "", int maxInputLength = 32);
+    InputListItem(std::string label, std::string initialValue, std::string helpText, std::string description = "", int maxInputLength = 32, int kbdDisableBitmask = KeyboardKeyDisableBitmask::KEYBOARD_DISABLE_NONE);
 
     virtual bool onClick() override;
 };
@@ -174,7 +174,7 @@ class InputListItem : public ListItem
 class IntegerInputListItem : public InputListItem
 {
   public:
-    IntegerInputListItem(std::string label, int initialValue, std::string helpText, std::string description = "", int maxInputLength = 32);
+    IntegerInputListItem(std::string label, int initialValue, std::string helpText, std::string description = "", int maxInputLength = 32, int kbdDisableBitmask = KeyboardKeyDisableBitmask::KEYBOARD_DISABLE_NONE);
 
     virtual bool onClick() override;
 };

@@ -38,6 +38,8 @@ class ScrollView : public View
 
     float scrollY = 0.0f; // from 0.0f to 1.0f, in % of content view height
 
+    float scrollBarAlpha = Application::getTheme()->scrollBarAlphaNormal;
+
     bool updateScrollingOnNextLayout = false;
     bool updateScrollingOnNextFrame  = false;
 

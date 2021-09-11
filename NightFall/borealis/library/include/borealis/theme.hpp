@@ -82,6 +82,12 @@ class Theme
     NVGcolor dialogBackdrop;
     NVGcolor dialogButtonColor;
     NVGcolor dialogButtonSeparatorColor;
+
+    NVGcolor scrollBarColor;
+    float scrollBarAlphaNormal;
+    float scrollBarAlphaFull;
+
+    float clickAnimationAlpha;
 };
 
 // Helper class to store two Theme variants and get the right one

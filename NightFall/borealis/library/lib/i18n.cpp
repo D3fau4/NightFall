@@ -102,10 +102,38 @@ std::string getCurrentLocale()
     }
     else
     {
-        brls::Logger::error("Unable to get system language (error 0x{0:x}), using the default one: {1}", res, DEFAULT_LOCALE);
+        brls::Logger::error("Unable to get system language (error {0:#x}), using the default one: {1}", res, DEFAULT_LOCALE);
     }
 #endif
     return DEFAULT_LOCALE;
+}
+
+int nxGetCurrentLocaleID()
+{
+#ifdef __SWITCH__
+    u64 languageCode = 0;
+    SetLanguage setlanguage = SetLanguage_ENUS;
+
+    Result res = setGetSystemLanguage(&languageCode);
+
+    if (R_SUCCEEDED(res))
+    {
+        if (R_SUCCEEDED(res))
+        {
+            res = setMakeLanguage(languageCode, &setlanguage);
+            return (int)setlanguage;
+        }
+        else
+        {
+            brls::Logger::error("Unable to convert system language ID (error {0:#x}), using the default one: {1}", res, DEFAULT_LOCALE);
+        }
+    }
+    else
+    {
+        brls::Logger::error("Unable to get system language (error {0:#x}), using the default one: {1}", res, DEFAULT_LOCALE);
+    }
+#endif
+    return 1; // SetLanguage_ENUS
 }
 
 void loadTranslations()
@@ -115,6 +143,13 @@ void loadTranslations()
     std::string currentLocaleName = getCurrentLocale();
     if (currentLocaleName != DEFAULT_LOCALE)
         loadLocale(currentLocaleName, &currentLocale);
+}
+
+void loadTranslations(std::string locale)
+{
+    loadLocale(DEFAULT_LOCALE, &defaultLocale);
+    if (locale != DEFAULT_LOCALE)
+        loadLocale(locale, &currentLocale);
 }
 
 namespace internal

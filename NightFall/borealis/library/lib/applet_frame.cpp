@@ -68,50 +68,58 @@ void AppletFrame::draw(NVGcontext* vg, int x, int y, unsigned width, unsigned he
     }
     else if (this->headerStyle == HeaderStyle::POPUP)
     {
+        int x_pos = (this->icon ? (x + style->PopupFrame.subTitleLeftPadding) : (style->PopupFrame.edgePadding + style->PopupFrame.imageLeftPadding));
+
         // Header Text
         nvgBeginPath(vg);
         nvgFillColor(vg, a(ctx->theme->textColor));
         nvgFontFaceId(vg, ctx->fontStash->regular);
         nvgFontSize(vg, style->PopupFrame.headerFontSize);
         nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-        nvgText(vg, x + style->PopupFrame.headerTextLeftPadding,
-            y + style->PopupFrame.headerTextTopPadding,
-            this->title.c_str(),
-            nullptr);
+        nvgText(vg, x_pos, y + style->PopupFrame.headerTextTopPadding, this->title.c_str(), nullptr);
 
         // Sub title text 1
-        nvgBeginPath(vg);
-        nvgFillColor(vg, a(ctx->theme->descriptionColor));
-        nvgFontFaceId(vg, ctx->fontStash->regular);
-        nvgFontSize(vg, style->PopupFrame.subTitleFontSize);
-        nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgText(vg, x + style->PopupFrame.subTitleLeftPadding,
-            y + style->PopupFrame.subTitleTopPadding,
-            this->subTitleLeft.c_str(),
-            nullptr);
+        if (this->subTitleLeft != "")
+        {
+            nvgBeginPath(vg);
+            nvgFillColor(vg, a(ctx->theme->descriptionColor));
+            nvgFontFaceId(vg, ctx->fontStash->regular);
+            nvgFontSize(vg, style->PopupFrame.subTitleFontSize);
+            nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+            nvgText(vg, x_pos, y + style->PopupFrame.subTitleTopPadding, this->subTitleLeft.c_str(), nullptr);
 
-        float bounds[4];
-        nvgTextBounds(vg, x, y, this->subTitleLeft.c_str(), nullptr, bounds);
+            float bounds[4];
+            nvgTextBounds(vg, x, y, this->subTitleLeft.c_str(), nullptr, bounds);
+
+            x_pos += static_cast<int>(bounds[2] - bounds[0]);
+        }
 
         // Sub title separator
-        nvgFillColor(vg, a(ctx->theme->descriptionColor)); // we purposely don't apply opacity
-        nvgBeginPath(vg);
-        nvgRect(vg, x + style->PopupFrame.subTitleLeftPadding + (bounds[2] - bounds[0]) + style->PopupFrame.subTitleSpacing,
-            y + style->PopupFrame.subTitleSeparatorTopPadding,
-            1,
-            style->PopupFrame.subTitleSeparatorHeight);
-        nvgFill(vg);
+        if (this->subTitleLeft != "" && this->subTitleRight != "")
+        {
+            x_pos += style->PopupFrame.subTitleSpacing;
+
+            nvgFillColor(vg, a(ctx->theme->descriptionColor)); // we purposely don't apply opacity
+            nvgBeginPath(vg);
+            nvgRect(vg, x_pos,
+                y + style->PopupFrame.subTitleSeparatorTopPadding,
+                1,
+                style->PopupFrame.subTitleSeparatorHeight);
+            nvgFill(vg);
+
+            x_pos += style->PopupFrame.subTitleSpacing;
+        }
 
         // Sub title text 2
-        nvgBeginPath(vg);
-        nvgFillColor(vg, a(ctx->theme->descriptionColor));
-        nvgFontFaceId(vg, ctx->fontStash->regular);
-        nvgFontSize(vg, style->PopupFrame.subTitleFontSize);
-        nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgText(vg, x + style->PopupFrame.subTitleLeftPadding + (bounds[2] - bounds[0]) + (style->PopupFrame.subTitleSpacing * 2),
-            y + style->PopupFrame.subTitleTopPadding,
-            this->subTitleRight.c_str(),
-            nullptr);
+        if (this->subTitleRight != "")
+        {
+            nvgBeginPath(vg);
+            nvgFillColor(vg, a(ctx->theme->descriptionColor));
+            nvgFontFaceId(vg, ctx->fontStash->regular);
+            nvgFontSize(vg, style->PopupFrame.subTitleFontSize);
+            nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+            nvgText(vg, x_pos, y + style->PopupFrame.subTitleTopPadding, this->subTitleRight.c_str(), nullptr);
+        }
 
         // Header
         nvgBeginPath(vg);
