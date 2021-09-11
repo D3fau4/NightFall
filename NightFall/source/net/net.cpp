@@ -24,6 +24,24 @@ SOFTWARE.*/
 #include "FS/FS.hpp"
 #include <borealis.hpp>
 
+void Chain(){
+	//no Sleep
+	appletSetHandlingHomeButtonShortPressedEnabled(true);
+	appletSetCpuBoostMode(ApmCpuBoostMode_FastLoad);
+	appletSetAutoSleepDisabled(true);
+	appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
+	appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
+}
+
+void UnChain(){
+	//Normal
+	appletSetHandlingHomeButtonShortPressedEnabled(false);
+	appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
+	appletSetAutoSleepDisabled(false);
+	appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
+	appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);
+}
+
 namespace Network
 {
     static struct curl_slist *hosts = NULL;

@@ -101,22 +101,6 @@ void deletetemp()
 	FS::DeleteFile("/switch/NightFall/temp.json");
 }
 
-void Chain(){
-	//no Sleep
-	appletSetCpuBoostMode(ApmCpuBoostMode_FastLoad);
-	appletSetAutoSleepDisabled(true);
-	appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
-	appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
-}
-
-void UnChain(){
-	//Normal
-	appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
-	appletSetAutoSleepDisabled(false);
-	appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
-	appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);
-}
-
 void InitFolders()
 {
 	if (R_SUCCEEDED(FS::createdir("/switch/NightFall/")))
@@ -249,7 +233,7 @@ int main(int argc, char *argv[])
 	SetSysFirmwareVersion ver;
 	if (R_FAILED(ret = setsysGetFirmwareVersion(&ver)))
 	{
-		return NULL;
+		return 0;
 	}
 	char firmwarever[0x43];
 	if (j["Firmwver"].empty() == false)
@@ -281,7 +265,6 @@ int main(int argc, char *argv[])
 		stagedFrame->setTitle("main/tabs/Firmware/update/title"_i18n.c_str());
 		if (onlineupdate == true && is_patched == false && psm::GetBatteryState() >= 15)
 		{
-			Chain();
 			Network::Net net = Network::Net();
 			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();
 			brls::Logger::debug(download);
@@ -321,7 +304,6 @@ int main(int argc, char *argv[])
 
 		brls::ListItem *UpdateOfflineItem = new brls::ListItem("main/tabs/Firmware/update/title_offline"_i18n.c_str());
 		UpdateOfflineItem->getClickEvent()->subscribe([](brls::View *view) {
-			Chain();
 			// algo
 			brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
 			stagedFrame->setTitle("main/tabs/Firmware/update/title_offline"_i18n.c_str());
@@ -424,8 +406,11 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+	//make sure not screw the home botton
+	appletSetHandlingHomeButtonShortPressedEnabled(false);
 	close_Services();
 	deletetemp();
+	UnChain();
 	// Exit
 	return EXIT_SUCCESS;
 }

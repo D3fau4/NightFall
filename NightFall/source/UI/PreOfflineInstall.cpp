@@ -20,6 +20,7 @@ SOFTWARE.*/
 
 #include <math.h>
 #include "UI/PreOfflineInstall.hpp"
+#include "net/net.hpp"
 
 #include <math.h>
 namespace i18n = brls::i18n;	// for loadTranslations() and getStr()
@@ -35,6 +36,7 @@ PreOfflineInstallPage::PreOfflineInstallPage(brls::StagedAppletFrame *frame, std
             brls::Application::popView();
         else
         {
+			Chain();
             frame->nextStage();
             //DownloadUpdatePage::meme();
         }

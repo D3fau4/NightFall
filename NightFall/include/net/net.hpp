@@ -24,6 +24,9 @@ SOFTWARE.*/
 #include <curl/curl.h>
 #include <switch.h>
 
+void Chain();
+void UnChain();
+
 using namespace std;
 namespace Network
 {

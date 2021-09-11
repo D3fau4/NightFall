@@ -20,7 +20,6 @@ SOFTWARE.*/
 
 #include <stdio.h>
 #include <switch.h>
-
 #include "spl/spl.hpp"
 
 namespace spl
@@ -29,25 +28,37 @@ namespace spl
     static constexpr u32 ExosphereHasRcmBugPatch = 65004;
     static constexpr u32 ExosphereEmummcType = 65007;
     
-    char *GetHardwareType(void)
+    std::string GetHardwareType(void)
     {
         Result ret = 0;
-        u64 hardware_type = 4;
-        char *hardware[] = {
-            "Icosa",  // Erista normal
-            "Copper", // Erista prototype
-            "Hoag",   // Mariko lite
-            "Iowa",   // Mariko retail
-            "Calcio", // Mariko prototype
-            "Aula",   // nx-abcd board
-            "Unknown"};
-
-        if (R_FAILED(ret = splGetConfig(SplConfigItem_HardwareType, &hardware_type)))
-        {
-            return hardware[4];
-        }
-        else
-            return hardware[hardware_type];
+		std::string MDL="Unknown";
+		//Model of switch board
+		s32 modelo;
+		if (R_FAILED(ret = setsysGetProductModel(&modelo))) {
+			printf("setsysGetProductModel() Failied: 0x%x.\n\n", ret);
+		} else {
+			switch(modelo) {
+				case SetSysProductModel_Nx:
+					MDL="Icosa";// Erista normal
+					break;
+				case SetSysProductModel_Copper:
+					MDL="Copper";// Erista prototype
+					break;
+				case SetSysProductModel_Iowa:
+					MDL="Iowa";// Mariko retail
+					break;
+				case SetSysProductModel_Hoag:
+					MDL="Hoag";// Mariko lite
+					break;
+				case SetSysProductModel_Calcio:
+					MDL="Calcio";// Mariko prototype
+					break;
+				case SetSysProductModel_Aula:
+					MDL="Aula";// nx-abcd board
+					break;
+			}
+		}
+        return MDL;
     }
 
     bool HasRCMbugPatched(void)
