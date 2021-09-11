@@ -321,6 +321,7 @@ int main(int argc, char *argv[])
 
 		brls::ListItem *UpdateOfflineItem = new brls::ListItem("main/tabs/Firmware/update/title_offline"_i18n.c_str());
 		UpdateOfflineItem->getClickEvent()->subscribe([](brls::View *view) {
+			Chain();
 			// algo
 			brls::StagedAppletFrame *stagedFrame = new brls::StagedAppletFrame();
 			stagedFrame->setTitle("main/tabs/Firmware/update/title_offline"_i18n.c_str());
