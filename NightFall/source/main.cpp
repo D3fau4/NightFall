@@ -213,14 +213,15 @@ int main(int argc, char *argv[])
 		std::string downloadlink = Conf["URL"].get<std::string>() + "info";
 		brls::Logger::debug(downloadlink);
 		if (R_SUCCEEDED(net.CheckURL(downloadlink))){
-			net.Download(downloadlink, "/switch/NightFall/actual.json");
-			std::ifstream i("/switch/NightFall/actual.json");
-			i >> j;
-			i.close();
+			std::string mememem = net.Request("application/json", downloadlink);
+			j = json::parse(mememem);
 		} else
 		{
 			brls::Application::notify("main/crash/wrongurl"_i18n.c_str() + downloadlink);
 		}
+
+		/* Debug */
+		net.DownloadLastUpdate("D3fau4", "NightFall", "NightFall.zip");
 	}
 
 	// Create a view
@@ -416,10 +417,8 @@ int main(int argc, char *argv[])
 				brls::Logger::debug(downloadlink);
 				if (R_SUCCEEDED(net.CheckURL(downloadlink)))
 				{
-					net.Download(downloadlink, "/switch/NightFall/actual.json");
-					std::ifstream i("/switch/NightFall/actual.json");
-					i >> j;
-					i.close();
+					std::string mememem = net.Request("application/text", downloadlink);
+					j = json::parse(mememem);
 				} else
 				{
 					brls::Application::notify("main/crash/wrongurl"_i18n.c_str() + downloadlink);

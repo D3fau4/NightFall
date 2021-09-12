@@ -45,5 +45,6 @@ namespace Network
         bool Download(string url, string filepath);
         bool HasInternet();
         Result CheckURL(string url);
+        Result DownloadLastUpdate(string Owner, string repo, string file);
     };
 } // namespace Network

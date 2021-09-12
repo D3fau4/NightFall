@@ -78,7 +78,7 @@ namespace BackGround
                         std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Program"].get<std::string>() + ".nca";
                         if (net.Download(download, out) == true)
                         {
-                            printf("error");
+                            brls::Logger::error("error");
                         }
                         else
                             this->m_DownloadProgress = this->m_DownloadProgress + 1;
@@ -90,7 +90,7 @@ namespace BackGround
                         std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Data"].get<std::string>() + ".nca";
                         if (net.Download(download, out) == true)
                         {
-                            printf("error");
+                            brls::Logger::error("error");
                         }
                         else
                             this->m_DownloadProgress = this->m_DownloadProgress + 1;
@@ -102,7 +102,7 @@ namespace BackGround
                         std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["PublicData"].get<std::string>() + ".nca";
                         if (net.Download(download, out) == true)
                         {
-                            printf("error");
+                            brls::Logger::error("error");
                         }
                         else
                             this->m_DownloadProgress = this->m_DownloadProgress + 1;
@@ -114,7 +114,7 @@ namespace BackGround
                         std::string out = "/switch/NightFall/temp/" + V1["programid"][v7[i]]["Meta"].get<std::string>() + ".cnmt.nca";
                         if (net.Download(download, out) == true)
                         {
-                            printf("error");
+                            brls::Logger::error("error");
                         }
                         else
                             this->m_DownloadProgress = this->m_DownloadProgress + 1;

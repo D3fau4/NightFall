@@ -21,6 +21,7 @@ SOFTWARE.*/
 #include <switch.h>
 #include "net/net.hpp"
 #include <cstring>
+#include "json.hpp"
 
 namespace Network
 {
@@ -60,7 +61,15 @@ namespace Network
 
     size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string *data)
     {
-        data->append((char *)ptr, size * nmemb);
+        try
+        {
+            data->append((char *)ptr, size * nmemb);
+        }
+        catch(std::bad_alloc &e)
+        {
+            brls::Logger::error("mori");
+        }
+        
         return size * nmemb;
     }
 
@@ -72,11 +81,11 @@ namespace Network
         if (curl)
         {
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
             curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall/1.0");
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFunction);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
             res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
@@ -101,6 +110,22 @@ namespace Network
         }
         if (res != CURLE_OK)
             return 1;
+        return 0;
+    }
+
+    Result Net::DownloadLastUpdate(string Owner, string repo, string file)
+    {
+        using json = nlohmann::json;
+        json j;
+        string url = "https://api.github.com/repos/" + Owner + "/" + repo + "/releases";
+
+        string jsontext = Request("application/json", url);
+
+        j = json::parse(jsontext);
+        string tag_name = j[0]["tag_name"].get<std::string>();
+        
+        string file_url = "https://github.com/" + Owner +"/" + repo + "/releases/download/" + tag_name + "/" + file;
+
         return 0;
     }
 
