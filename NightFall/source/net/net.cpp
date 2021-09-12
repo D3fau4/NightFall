@@ -57,7 +57,7 @@ namespace Network
 	{
 	  char *memory;
 	  size_t size;
-	  int mode;
+	  FILE *fp;
 	};
 
 	static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, void *userdata)
@@ -69,7 +69,14 @@ namespace Network
 
 	  if (ptr == NULL)
 	  {
-		  printf("Failed to realloc mem");
+		  printf("Failed to realloc mem\n");
+		  printf("Writing... %luMb To file\n",mem->size / 1000000 + 1);
+		  fwrite(mem->memory, 1, mem->size, mem->fp);
+		  free(mem->memory);
+		  mem->memory = (char*)malloc(1);
+		  mem->size = 0;
+		  ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
+		  if (ptr == NULL) return 0;
 		  return 0;
 	  }
 	 
@@ -97,6 +104,7 @@ namespace Network
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+            curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall/1.0");
             curl_easy_setopt(curl, CURLOPT_RESOLVE, hosts);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -114,30 +122,29 @@ namespace Network
 			return false;
 		}
 		std::string out=filepath+".tmp";
-        FILE *fp;
         CURLcode res = CURLE_OK;
         CURL *curl = curl_easy_init();
 
         if (curl)
         {
-            fp = fopen(out.c_str(), "wb");
  			struct MemoryStruct chunk;
+            chunk.fp = fopen(out.c_str(), "a");
             chunk.memory = (char*)malloc(1);
             chunk.size = 0;
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
             curl_easy_setopt(curl, CURLOPT_RESOLVE, hosts);
-            curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall");
+            curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall/1.0");
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
             curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
             res = curl_easy_perform(curl);
-            fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
+            fwrite(chunk.memory, 1, chunk.size, chunk.fp);// write from mem to file
 			curl_easy_cleanup(curl);
 			free(chunk.memory);
-            fclose(fp);
+            fclose(chunk.fp);
         }
         else
         {
@@ -146,6 +153,7 @@ namespace Network
         if (res != CURLE_OK)
             remove(out.c_str());
 		else{
+			remove(filepath.c_str());
 			rename(out.c_str(),filepath.c_str());
 			remove(out.c_str());
 		}
