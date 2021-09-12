@@ -46,7 +46,7 @@ namespace Network
         if (!ptr)
         {
             /* out of memory! */
-            printf("not enough memory (realloc returned NULL)\n");
+            brls::Logger::error("not enough memory (realloc returned NULL)\n");
             return 0;
         }
 
