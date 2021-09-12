@@ -20,14 +20,42 @@ SOFTWARE.*/
 
 #include <switch.h>
 #include "net/net.hpp"
+#include <cstring>
+
 namespace Network
 {
-    static struct curl_slist *hosts = NULL;
+    struct Net::MemoryStruct buffer;
 
-    Net::Net()
+    Net::Net(int UseMemory)
     {
         curl_global_init(CURL_GLOBAL_DEFAULT);
-        hosts = curl_slist_append(NULL, "reinx.guide:167.99.228.103");
+        Net::UseMemory = UseMemory;
+        if (Net::UseMemory == 1)
+        {
+            buffer.memory = (char *)malloc(1);
+            buffer.size = 0;
+        }
+    }
+
+    static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
+    {
+        size_t realsize = size * nmemb;
+        struct Net::MemoryStruct *mem = (struct Net::MemoryStruct *)userp;
+
+        char *ptr = (char *)realloc(mem->memory, mem->size + realsize + 1);
+        if (!ptr)
+        {
+            /* out of memory! */
+            printf("not enough memory (realloc returned NULL)\n");
+            return 0;
+        }
+
+        mem->memory = ptr;
+        memcpy(&(mem->memory[mem->size]), contents, realsize);
+        mem->size += realsize;
+        mem->memory[mem->size] = 0;
+
+        return realsize;
     }
 
     size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string *data)
@@ -46,7 +74,7 @@ namespace Network
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-            curl_easy_setopt(curl, CURLOPT_RESOLVE, hosts);
+            curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall/1.0");
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
@@ -67,14 +95,26 @@ namespace Network
             fp = fopen(filepath.c_str(), "wb");
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-            curl_easy_setopt(curl, CURLOPT_RESOLVE, hosts);
-            curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall");
+            curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall/1.0");
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fwrite);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+            if (Net::UseMemory != 1)
+            {
+                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fwrite);
+                curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+            }
+            else
+            {
+                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+                curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&buffer);
+            }
             curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
             res = curl_easy_perform(curl);
+            if (Net::UseMemory == 1) 
+            {
+                fwrite(buffer.memory, 1, buffer.size, fp);
+                free(buffer.memory);
+            }
             curl_easy_cleanup(curl);
             fclose(fp);
         }
@@ -87,9 +127,11 @@ namespace Network
         return res == CURLE_OK ? false : true;
     }
 
-    bool Net::HasInternet(){
+    bool Net::HasInternet()
+    {
         u32 strg = 0;
         nifmGetInternetConnectionStatus(NULL, &strg, NULL);
         return (strg > 0);
     }
+
 } // namespace Network

@@ -168,7 +168,6 @@ int main(int argc, char *argv[])
 	// init
 	i18n::loadTranslations();
 	BackGround::BackgroundTasks meme;
-	Network::Net net = Network::Net();
 
 	brls::Logger::setLogLevel(brls::LogLevel::DEBUG);
 	if (!brls::Application::init("NightFall"))
@@ -189,6 +188,9 @@ int main(int argc, char *argv[])
 		o.close();
 		CheckJson();
 	}
+
+	/* Init Net */
+	Network::Net net = Network::Net(Conf["UseMemory"].get<int>());
 
 	/* Initialize Services */
 	if (R_FAILED(Init_Services()))
@@ -260,7 +262,7 @@ int main(int argc, char *argv[])
 		stagedFrame->setTitle("main/tabs/Firmware/update/title"_i18n.c_str());
 		if (onlineupdate == true && is_patched == false && psm::GetBatteryState() >= 15)
 		{
-			Network::Net net = Network::Net();
+			Network::Net net = Network::Net(Conf["UseMemory"].get<int>());
 			std::string download = Conf["URL"].get<std::string>() + j["intfw"].get<std::string>();
 			brls::Logger::debug(download);
 			net.Download(download, "/switch/NightFall/temp.json");
@@ -311,7 +313,7 @@ int main(int argc, char *argv[])
 		mainlist->addView(selectfirmoff);
 	}
 
-	// Settings Tab
+	/* Settings Tab */
 	brls::List *Settingslist = new brls::List();
 
 	brls::SelectListItem *wantExfat = new brls::SelectListItem(
@@ -323,6 +325,11 @@ int main(int argc, char *argv[])
 		"main/tabs/Settings/delete_options/title"_i18n.c_str(),
 		{"main/tabs/Settings/delete_options/no"_i18n.c_str(), "main/tabs/Settings/delete_options/yes"_i18n.c_str()}, 0, "main/tabs/Settings/delete_options/subtitle"_i18n.c_str());
 	DeletePostInstall->setSelectedValue(Conf["DeleteFolder"].get<int>());
+
+	brls::SelectListItem *UseMemory = new brls::SelectListItem(
+		"main/tabs/Settings/UseMemory/title"_i18n.c_str(),
+		{"main/tabs/Settings/UseMemory/no"_i18n.c_str(), "main/tabs/Settings/UseMemory/yes"_i18n.c_str()}, 0, "main/tabs/Settings/UseMemory/subtitle"_i18n.c_str());
+	UseMemory->setSelectedValue(Conf["UseMemory"].get<int>());
 
 	brls::ListItem *Serverurl = new brls::ListItem("main/tabs/Settings/change_url/title"_i18n.c_str(), "main/tabs/Settings/change_url/subtitle"_i18n.c_str());
 	Serverurl->getClickEvent()->subscribe([](brls::View *view) {
@@ -349,6 +356,7 @@ int main(int argc, char *argv[])
 	Settingslist->addView(Serverurl);
 	Settingslist->addView(wantExfat);
 	Settingslist->addView(DeletePostInstall);
+	Settingslist->addView(UseMemory);
 	// add in the root MemeItem the tabs
 	rootFrame->addTab("main/tabs/Firmware/title"_i18n.c_str(), mainlist);
 	rootFrame->addSeparator();
@@ -379,6 +387,13 @@ int main(int argc, char *argv[])
 		if (DeletePostInstall->getSelectedValue() != Conf["DeleteFolder"].get<int>())
 		{
 			Conf["DeleteFolder"] = DeletePostInstall->getSelectedValue();
+			std::ofstream out("/switch/NightFall/config.json");
+			out << Conf;
+			out.close();
+		}
+		if (UseMemory->getSelectedValue() != Conf["UseMemory"].get<int>())
+		{
+			Conf["UseMemory"] = DeletePostInstall->getSelectedValue();
 			std::ofstream out("/switch/NightFall/config.json");
 			out << Conf;
 			out.close();

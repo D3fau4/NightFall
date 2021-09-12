@@ -58,15 +58,15 @@ namespace BackGround
 
     void BackgroundTasks::DownloadUpdate()
     {
-        Network::Net net = Network::Net();
+        std::ifstream o("/switch/NightFall/config.json");
+        o >> config;
+        Network::Net net = Network::Net(config["UseMemory"].get<int>());
         while (this->m_running)
         {
             if (this->m_Download == true)
             {
                 std::ifstream i("/switch/NightFall/temp.json");
                 i >> V1;
-                std::ifstream o("/switch/NightFall/config.json");
-                o >> config;
                 auto v7 = V1["titleids"].get<std::vector<std::string>>();
                 int n = v7.size();
                 for (int i = 0; i < n; i++)
