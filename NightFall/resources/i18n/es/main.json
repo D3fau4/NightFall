@@ -1,7 +1,8 @@
 {
     "crash": {
         "service_start": "No se pudieron iniciar todos los servicios",
-        "service_TX": "El programa solo se puede ejecutar en atmosphere."
+        "service_TX": "El programa solo se puede ejecutar en atmosphere.",
+        "wrongurl" : "No se pudo acceder a esta dirección: "
     },
     "tabs": {
         "Firmware": {

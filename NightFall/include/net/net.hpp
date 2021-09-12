@@ -44,5 +44,6 @@ namespace Network
         string Request(string method, string url);
         bool Download(string url, string filepath);
         bool HasInternet();
+        Result CheckURL(string url);
     };
 } // namespace Network

@@ -1,7 +1,8 @@
 {
     "crash": {
         "service_start": "サービスを開始できません",
-        "service_TX": "atmosphereでのみ動作するため、ソフトウェアは閉じられました"
+        "service_TX": "atmosphereでのみ動作するため、ソフトウェアは閉じられました",
+        "wrongurl" : "This address could not be accessed: "
     },
     "tabs": {
         "Firmware": {

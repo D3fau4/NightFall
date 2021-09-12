@@ -84,6 +84,26 @@ namespace Network
         return !res ? response : "{}";
     }
 
+    Result Net::CheckURL(string url)
+    {
+        CURLcode res = CURLE_OK;
+        CURL *curl = curl_easy_init();
+
+        if (curl)
+        {
+            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+            curl_easy_setopt(curl, CURLOPT_USERAGENT, "NightFall/1.0");
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+            res = curl_easy_perform(curl);
+            curl_easy_cleanup(curl);
+        }
+        if (res != CURLE_OK)
+            return 1;
+        return 0;
+    }
+
     bool Net::Download(string url, string filepath)
     {
         FILE *fp;
@@ -110,7 +130,7 @@ namespace Network
             }
             curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
             res = curl_easy_perform(curl);
-            if (Net::UseMemory == 1) 
+            if (Net::UseMemory == 1)
             {
                 fwrite(buffer.memory, 1, buffer.size, fp);
                 free(buffer.memory);
