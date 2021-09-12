@@ -35,6 +35,12 @@
             "change_url": {
                 "title": "Servidor",
                 "subtitle": "Cambiar la URL"
+            },
+            "UseMemory": {
+                "title": "Descargar archivos en la memoria (EXPERIMENTAL)",
+                "subtitle": "ATENCIÓN: ESTO ES UNA FUNCIÓN EXPERIMENTAL PUEDE PROVOCAR ERRORES.\nDescargar los archivos en la memoria hace que las descargas sean más rápidas pero pueden provocar un desbordamiento de la memoria.",
+                "yes": "Si",
+                "no": "No"
             }
         }
     }

@@ -35,6 +35,12 @@
             "change_url": {
                 "title": "Server",
                 "subtitle": "Change the URL"
+            },
+            "UseMemory": {
+                "title": "Use memory for downloads",
+                "subtitle": "CAUTION: THIS IS AN EXPERIMENTAL FEATURE AND MAY CAUSE ERRORS.\nDownloading files into memory makes downloads faster, but may cause memory overflow.",
+                "yes": "Yes",
+                "no": "No"
             }
         }
     }

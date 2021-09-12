@@ -35,6 +35,12 @@
             "change_url": {
                 "title": "サーバー",
                 "subtitle": "URLを変更"
+            },
+            "UseMemory": {
+                "title": "Borrar datos instalados",
+                "subtitle": "¿Quieres borrar la carpeta después de instalar el firmware?",
+                "yes": "Si",
+                "no": "No"
             }
         }
     }

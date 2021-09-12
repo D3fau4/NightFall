@@ -29,8 +29,17 @@ namespace Network
 {
     class Net
     {
+    private:
+        int UseMemory;
+
     public:
-        Net();
+        struct MemoryStruct
+        {
+            char *memory;
+            size_t size;
+        };
+
+        Net(int UseMemory);
         string Request(string method, string url);
         bool Download(string url, string filepath);
         bool HasInternet();
