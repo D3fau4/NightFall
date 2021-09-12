@@ -40,7 +40,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 TARGET				:=	$(notdir $(CURDIR))
 APP_TITLE 			:= 	NightFall
 APP_AUTHOR 			:= 	D3fau4
-APP_VERSION 		:= 	1.1.2
+APP_VERSION 		:= 	1.2.0
 ICON				:=  resources/icon/NightFall.jpg
 BUILD				:=	build
 SOURCES				:=	source source/amssu source/sm source/spl source/hid source/FS source/net source/psm source/UI
@@ -62,7 +62,7 @@ CFLAGS	+=	$(INCLUDE) -D__SWITCH__ \
 			-DBOREALIS_RESOURCES="\"$(BOREALIS_RESOURCES)\"" \
 			$(ARCH) $(DEFINES) `curl-config --cflags`
 
-CXXFLAGS	:= $(CFLAGS) -std=c++17 -O2
+CXXFLAGS	:= $(CFLAGS) -std=c++20 -O2
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
