@@ -2,7 +2,7 @@
     "crash": {
         "service_start": "サービスを開始できません",
         "service_TX": "atmosphereでのみ動作するため、ソフトウェアは閉じられました",
-        "wrongurl" : "This address could not be accessed: "
+        "wrongurl" : "このアドレスにアクセスできませんでした: "
     },
     "tabs": {
         "Firmware": {
@@ -38,10 +38,10 @@
                 "subtitle": "URLを変更"
             },
             "UseMemory": {
-                "title": "Borrar datos instalados",
-                "subtitle": "¿Quieres borrar la carpeta después de instalar el firmware?",
-                "yes": "Si",
-                "no": "No"
+                "title": "インストールされたデータをクリアする",
+                "subtitle": "ファームウェアのインストール後にフォルダを削除しますか？",
+                "yes": "はい",
+                "no": "いいえ"
             }
         }
     }
